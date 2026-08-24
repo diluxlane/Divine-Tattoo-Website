@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Divine Tattoo — Portfolio Manager</title>
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+  <main class="dashboard-page">
+
+    <header class="dashboard-header">
+
+      <div>
+        <p class="eyebrow">DIVINE TATTOO</p>
+        <h1>Portfolio Manager</h1>
+        <p class="subtitle">
+          Manage the images displayed in your portfolio.
+        </p>
+      </div>
+
+      <button id="logoutButton" type="button">
+        Sign Out
+      </button>
+
+    </header>
+
+
+    <section class="dashboard-content">
+
+      <div class="upload-card">
+
+        <h2>Add Portfolio Image</h2>
+
+        <p>
+          Upload a tattoo image to your private portfolio storage.
+        </p>
+
+        <input
+          type="file"
+          id="imageInput"
+          accept="image/jpeg,image/png,image/webp"
+        >
+
+        <button id="uploadButton" type="button">
+          Upload Image
+        </button>
+
+        <p
+          id="uploadMessage"
+          class="message"
+          aria-live="polite"
+        ></p>
+
+      </div>
+
+
+      <section class="portfolio-section">
+
+        <div class="section-heading">
+
+          <div>
+            <p class="eyebrow">PORTFOLIO</p>
+            <h2>Your Images</h2>
+          </div>
+
+        </div>
+
+        <div
+          id="portfolioGrid"
+          class="portfolio-grid"
+        ></div>
+
+        <p
+          id="portfolioMessage"
+          class="message"
+          aria-live="polite"
+        ></p>
+
+      </section>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="dashboard.js"></script>
+
+</body>
+</html>
