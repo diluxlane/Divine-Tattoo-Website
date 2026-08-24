@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Divine Tattoo — Admin</title>
+
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+  <main class="login-page">
+
+    <section class="login-card">
+
+      <div class="brand">
+        <h1>Divine</h1>
+        <span>Tattoo</span>
+      </div>
+
+      <p class="eyebrow">PRIVATE STUDIO CMS</p>
+
+      <h2>Welcome Back</h2>
+
+      <p class="subtitle">
+        Sign in to manage the Divine Tattoo portfolio.
+      </p>
+
+      <form id="loginForm">
+
+        <label for="email">
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Your email"
+          autocomplete="email"
+          required
+        >
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Your password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button type="submit" id="loginButton">
+          Sign In
+        </button>
+
+        <p id="loginMessage" class="message" aria-live="polite"></p>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="admin.js"></script>
+
+</body>
+  </html>
