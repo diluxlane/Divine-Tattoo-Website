@@ -9,7 +9,11 @@
   <link rel="stylesheet" href="admin.css">
 </head>
 
-<body>
+<body class="auth-checking">
+
+  <div id="authLoading" class="auth-loading">
+    Checking authentication...
+  </div>
 
   <main class="dashboard-page">
 
@@ -17,13 +21,18 @@
 
       <div>
         <p class="eyebrow">DIVINE TATTOO</p>
+
         <h1>Portfolio Manager</h1>
+
         <p class="subtitle">
           Manage the images displayed in your portfolio.
         </p>
       </div>
 
-      <button id="logoutButton" type="button">
+      <button
+        id="logoutButton"
+        type="button"
+      >
         Sign Out
       </button>
 
@@ -46,7 +55,10 @@
           accept="image/jpeg,image/png,image/webp"
         >
 
-        <button id="uploadButton" type="button">
+        <button
+          id="uploadButton"
+          type="button"
+        >
           Upload Image
         </button>
 
@@ -65,15 +77,18 @@
 
           <div>
             <p class="eyebrow">PORTFOLIO</p>
+
             <h2>Your Images</h2>
           </div>
 
         </div>
 
+
         <div
           id="portfolioGrid"
           class="portfolio-grid"
         ></div>
+
 
         <p
           id="portfolioMessage"
@@ -87,7 +102,11 @@
 
   </main>
 
-  <script type="module" src="dashboard.js"></script>
+
+  <script
+    type="module"
+    src="dashboard.js"
+  ></script>
 
 </body>
 </html>
