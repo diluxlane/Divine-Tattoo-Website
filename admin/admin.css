@@ -351,6 +351,38 @@ button:disabled {
 
 
 /* ==========================================================
+   DRAG-AND-DROP HINT
+   ========================================================== */
+
+.portfolio-card::before {
+  content: "↕ Drag to reorder";
+
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  z-index: 5;
+
+  padding: 5px 9px;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.72);
+  color: #ffffff;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+
+  pointer-events: none;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+
+/* ==========================================================
    IMAGE
    ========================================================== */
 
