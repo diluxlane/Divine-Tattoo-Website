@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <title>Divine Tattoo — Admin</title>
+  <meta
+    name="theme-color"
+    content="#080808"
+  >
+
+  <title>Divine Tattoo — Private Studio</title>
 
   <link rel="stylesheet" href="admin.css">
 </head>
@@ -13,62 +21,149 @@
 
   <main class="login-page">
 
-    <section class="login-card">
+    <div class="login-background" aria-hidden="true">
+      <span class="background-orb background-orb-one"></span>
+      <span class="background-orb background-orb-two"></span>
+    </div>
 
-      <div class="brand">
-        <h1>Divine</h1>
-        <span>Tattoo</span>
+    <section
+      class="login-card"
+      aria-labelledby="loginTitle"
+    >
+
+      <!-- Brand -->
+
+      <header class="brand-area">
+
+        <div class="brand">
+          <h1>Divine</h1>
+          <span>Tattoo</span>
+        </div>
+
+        <div class="brand-line"></div>
+
+        <p class="eyebrow">
+          PRIVATE STUDIO CMS
+        </p>
+
+      </header>
+
+
+      <!-- Introduction -->
+
+      <div class="login-intro">
+
+        <p class="intro-label">
+          Studio Access
+        </p>
+
+        <h2 id="loginTitle">
+          Welcome Back
+        </h2>
+
+        <p class="subtitle">
+          Sign in to manage the Divine Tattoo portfolio.
+        </p>
+
       </div>
 
-      <p class="eyebrow">PRIVATE STUDIO CMS</p>
 
-      <h2>Welcome Back</h2>
+      <!-- Login form -->
 
-      <p class="subtitle">
-        Sign in to manage the Divine Tattoo portfolio.
-      </p>
+      <form id="loginForm" novalidate>
 
-      <form id="loginForm">
+        <div class="field">
 
-        <label for="email">
-          Email
-        </label>
+          <label for="email">
+            Email
+          </label>
 
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Your email"
-          autocomplete="email"
-          required
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Your email"
+            autocomplete="email"
+            inputmode="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="field-header">
+
+            <label for="password">
+              Password
+            </label>
+
+          </div>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Your password"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          id="loginButton"
         >
+          <span class="button-text">
+            Sign In
+          </span>
 
-        <label for="password">
-          Password
-        </label>
-
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Your password"
-          autocomplete="current-password"
-          required
-        >
-
-        <button type="submit" id="loginButton">
-          Sign In
+          <span
+            class="button-arrow"
+            aria-hidden="true"
+          >
+            →
+          </span>
         </button>
 
-        <p id="loginMessage" class="message" aria-live="polite"></p>
+
+        <p
+          id="loginMessage"
+          class="message"
+          aria-live="polite"
+        ></p>
 
       </form>
+
+
+      <!-- Footer -->
+
+      <footer class="login-footer">
+
+        <span></span>
+
+        <p>
+          DIVINE TATTOO
+          <span>•</span>
+          PRIVATE ACCESS
+        </p>
+
+        <span></span>
+
+      </footer>
 
     </section>
 
   </main>
 
-  <script type="module" src="admin.js"></script>
+
+  <script
+    type="module"
+    src="admin.js"
+  ></script>
 
 </body>
-  </html>
+</html>
