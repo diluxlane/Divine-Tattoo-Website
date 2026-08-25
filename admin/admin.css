@@ -1,204 +1,22 @@
 /* ==========================================================
    DIVINE TATTOO — ADMIN CMS
-   Mobile-first portfolio management interface
+   Premium login + mobile-first portfolio management
    ========================================================== */
+
 
 /* ==========================================================
-   DIVINE TATTOO — ADMIN LOGIN
+   ROOT
    ========================================================== */
 
-.login-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 24px;
-
-  position: relative;
-  overflow: hidden;
-
-  background:
-    radial-gradient(
-      circle at 50% 20%,
-      rgba(212, 175, 55, 0.12),
-      transparent 38%
-    ),
-    #080808;
-}
-
-.login-card {
-  width: min(100%, 430px);
-
-  padding: 42px 28px 30px;
-
-  border: 1px solid rgba(212, 175, 55, 0.20);
-  border-radius: 20px;
-
-  background: rgba(255, 255, 255, 0.03);
-
-  box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.55);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.brand {
-  text-align: center;
-}
-
-.brand h1 {
-  margin: 0;
-
-  color: #f5f5f5;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 3.5rem;
-  font-weight: 400;
-  line-height: 0.9;
-}
-
-.brand span {
-  display: block;
-
-  margin-top: 8px;
-
-  color: #d4af37;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 1rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-}
-
-.login-card .eyebrow {
-  margin: 28px 0 0;
-
-  text-align: center;
-
-  color: #d4af37;
-
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-}
-
-.login-card h2 {
-  margin: 24px 0 0;
-
-  text-align: center;
-
-  color: #f5f5f5;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 2rem;
-  font-weight: 400;
-}
-
-.login-card .subtitle {
-  margin: 10px auto 30px;
-
-  text-align: center;
-
-  color: #a7a7a7;
-
-  font-size: 0.86rem;
-}
-
-#loginForm {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-#loginForm label {
-  margin-top: 7px;
-
-  color: #d8d8d8;
-
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-#loginForm input {
-  width: 100%;
-  min-height: 50px;
-
-  padding: 13px 15px;
-
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-
-  outline: none;
-
-  background: rgba(0, 0, 0, 0.32);
-  color: #f5f5f5;
-}
-
-#loginForm input:focus {
-  border-color: rgba(212, 175, 55, 0.7);
-
-  box-shadow:
-    0 0 0 3px rgba(212, 175, 55, 0.08);
-}
-
-#loginButton {
-  width: 100%;
-  min-height: 52px;
-
-  margin-top: 18px;
-
-  border: 1px solid #d4af37;
-  border-radius: 10px;
-
-  background: #d4af37;
-  color: #111;
-
-  font-weight: 900;
-
-  cursor: pointer;
-}
-
-#loginButton:hover {
-  filter: brightness(1.08);
-}
-
-#loginMessage {
-  min-height: 22px;
-
-  margin: 7px 0 0;
-
-  text-align: center;
-
-  color: #a7a7a7;
-
-  font-size: 0.78rem;
-}
-
-
-/* ==========================================================    
-   DIVINE TATTOO — ADMIN CMS    
-   Mobile-first portfolio management interface    
-   ========================================================== */    
-    
-:root {    
-  --bg: #0b0b0b;    
-  --surface: #121212;    
-  --surface-2: #181818;    
 :root {
-  --bg: #0b0b0b;
-  --surface: #121212;
-  --surface-2: #181818;
+  --bg: #080808;
+  --surface: #111111;
+  --surface-2: #171717;
   --surface-3: #202020;
 
   --text: #f5f5f5;
   --muted: #a7a7a7;
+
   --border: rgba(255, 255, 255, 0.10);
 
   --gold: #d4af37;
@@ -228,6 +46,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
 
   background:
     radial-gradient(
@@ -250,11 +69,6 @@ body {
   line-height: 1.5;
 }
 
-
-/* ==========================================================
-   LINKS / BUTTONS
-   ========================================================== */
-
 button,
 input {
   font: inherit;
@@ -271,23 +85,417 @@ button:disabled {
 
 
 /* ==========================================================
+   PREMIUM LOGIN PAGE
+   ========================================================== */
+
+.login-page {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 24px;
+
+  overflow: hidden;
+}
+
+
+/* ==========================================================
+   LOGIN BACKGROUND
+   ========================================================== */
+
+.login-background {
+  position: fixed;
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.background-orb {
+  position: absolute;
+
+  width: 420px;
+  height: 420px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(212, 175, 55, 0.10),
+      transparent 68%
+    );
+
+  filter: blur(20px);
+}
+
+.background-orb-one {
+  top: -220px;
+  left: -180px;
+}
+
+.background-orb-two {
+  right: -220px;
+  bottom: -240px;
+
+  opacity: 0.55;
+}
+
+
+/* ==========================================================
+   LOGIN CARD
+   ========================================================== */
+
+.login-card {
+  position: relative;
+  z-index: 1;
+
+  width: min(100%, 460px);
+
+  padding: 34px 26px 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    ),
+    rgba(10, 10, 10, 0.94);
+
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+
+/* ==========================================================
+   BRAND
+   ========================================================== */
+
+.brand-area {
+  text-align: center;
+}
+
+.brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+
+  line-height: 0.85;
+}
+
+.brand h1 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(2.6rem, 12vw, 4rem);
+  font-weight: 400;
+
+  letter-spacing: -0.04em;
+}
+
+.brand span {
+  margin-top: 7px;
+
+  color: var(--gold);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+
+  transform: translateX(0.21em);
+}
+
+.brand-line {
+  width: 46px;
+  height: 1px;
+
+  margin: 25px auto 18px;
+
+  background: var(--gold);
+}
+
+.eyebrow {
+  margin: 0;
+
+  color: var(--gold);
+
+  font-size: 0.65rem;
+  font-weight: 800;
+
+  letter-spacing: 0.22em;
+}
+
+
+/* ==========================================================
+   LOGIN INTRO
+   ========================================================== */
+
+.login-intro {
+  margin-top: 42px;
+}
+
+.intro-label {
+  margin: 0 0 8px;
+
+  color: var(--muted);
+
+  font-size: 0.67rem;
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.login-intro h2 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  font-weight: 400;
+
+  line-height: 1.05;
+}
+
+.subtitle {
+  max-width: 380px;
+
+  margin: 12px 0 0;
+
+  color: var(--muted);
+
+  font-size: 0.88rem;
+}
+
+
+/* ==========================================================
+   LOGIN FORM
+   ========================================================== */
+
+#loginForm {
+  margin-top: 30px;
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #d8d8d8;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  letter-spacing: 0.02em;
+}
+
+.field input {
+  display: block;
+
+  width: 100%;
+  min-height: 50px;
+
+  padding: 0 15px;
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
+
+  font-size: 0.9rem;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.field input::placeholder {
+  color: #6f6f6f;
+}
+
+.field input:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.field input:focus {
+  border-color: rgba(212, 175, 55, 0.65);
+
+  background: rgba(212, 175, 55, 0.035);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+
+/* ==========================================================
+   LOGIN BUTTON
+   ========================================================== */
+
+#loginButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  min-height: 52px;
+
+  margin-top: 8px;
+
+  padding: 0 17px;
+
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+
+  background: var(--gold);
+  color: #101010;
+
+  font-size: 0.78rem;
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  transition:
+    transform 0.15s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#loginButton:hover {
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 8px 30px rgba(212, 175, 55, 0.16);
+}
+
+#loginButton:active {
+  transform: translateY(1px);
+}
+
+.button-arrow {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
+
+.message {
+  min-height: 22px;
+
+  margin: 12px 0 0;
+
+  color: var(--danger);
+
+  font-size: 0.78rem;
+
+  text-align: center;
+}
+
+#uploadMessage {
+  color: var(--gold);
+}
+
+
+/* ==========================================================
+   LOGIN FOOTER
+   ========================================================== */
+
+.login-footer {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 32px;
+}
+
+.login-footer > span {
+  flex: 1;
+
+  height: 1px;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.login-footer p {
+  margin: 0;
+
+  color: #666;
+
+  font-size: 0.58rem;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+
+  white-space: nowrap;
+}
+
+.login-footer p span {
+  display: inline;
+
+  color: var(--gold);
+}
+
+
+/* ==========================================================
    ADMIN SHELL
    ========================================================== */
 
 .admin-shell {
   width: min(1180px, calc(100% - 32px));
+
   margin: 0 auto;
+
   padding: 32px 0 60px;
 }
 
 
 /* ==========================================================
-   HEADER
+   ADMIN HEADER
    ========================================================== */
 
 .admin-header {
   display: flex;
   flex-direction: column;
+
   gap: 24px;
 
   padding: 10px 0 32px;
@@ -302,11 +510,14 @@ button:disabled {
 
   font-size: 0.72rem;
   font-weight: 700;
+
   letter-spacing: 0.18em;
 }
 
 .admin-header h1 {
   margin: 0;
+
+  color: var(--text);
 
   font-family:
     Georgia,
@@ -315,14 +526,17 @@ button:disabled {
 
   font-size: clamp(2.2rem, 8vw, 4rem);
   font-weight: 500;
+
   line-height: 1;
 }
 
 .admin-subtitle {
   max-width: 560px;
+
   margin: 12px 0 0;
 
   color: var(--muted);
+
   font-size: 0.95rem;
 }
 
@@ -349,6 +563,7 @@ button:disabled {
 
 .logout-button:hover {
   background: var(--surface-2);
+
   border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -389,6 +604,8 @@ button:disabled {
 .section-heading h2 {
   margin: 0;
 
+  color: var(--text);
+
   font-family:
     Georgia,
     "Times New Roman",
@@ -402,6 +619,7 @@ button:disabled {
   margin: 6px 0 0;
 
   color: var(--muted);
+
   font-size: 0.86rem;
 }
 
@@ -413,6 +631,7 @@ button:disabled {
 .upload-controls {
   display: flex;
   flex-direction: column;
+
   gap: 12px;
 }
 
@@ -477,24 +696,6 @@ button:disabled {
 
 
 /* ==========================================================
-   MESSAGES
-   ========================================================== */
-
-.message {
-  min-height: 22px;
-  margin: 12px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.86rem;
-}
-
-#uploadMessage {
-  color: var(--gold);
-}
-
-
-/* ==========================================================
    PORTFOLIO GRID
    ========================================================== */
 
@@ -534,18 +735,20 @@ button:disabled {
 
 .portfolio-card.dragging {
   opacity: 0.35;
+
   transform: scale(0.97);
 }
 
 
 /* ==========================================================
-   DRAG-AND-DROP HINT
+   DRAG HINT
    ========================================================== */
 
 .portfolio-card::before {
   content: "↕ Drag to reorder";
 
   position: absolute;
+
   top: 10px;
   left: 10px;
 
@@ -561,6 +764,7 @@ button:disabled {
 
   font-size: 0.68rem;
   font-weight: 700;
+
   line-height: 1;
 
   pointer-events: none;
@@ -578,6 +782,7 @@ button:disabled {
   display: block;
 
   width: 100%;
+
   aspect-ratio: 1 / 1;
 
   object-fit: cover;
@@ -587,12 +792,13 @@ button:disabled {
 
 
 /* ==========================================================
-   CARD INFORMATION
+   PORTFOLIO INFORMATION
    ========================================================== */
 
 .portfolio-info {
   display: flex;
   flex-direction: column;
+
   gap: 9px;
 
   padding: 12px;
@@ -685,10 +891,26 @@ button:disabled {
 
 
 /* ==========================================================
+   ACCESSIBILITY
+   ========================================================== */
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--gold);
+
+  outline-offset: 3px;
+}
+
+
+/* ==========================================================
    DESKTOP
    ========================================================== */
 
 @media (min-width: 700px) {
+
+  .login-card {
+    padding: 46px 46px 28px;
+  }
 
   .admin-shell {
     padding-top: 48px;
@@ -696,6 +918,7 @@ button:disabled {
 
   .admin-header {
     flex-direction: row;
+
     align-items: flex-start;
     justify-content: space-between;
   }
@@ -711,6 +934,7 @@ button:disabled {
 
   .upload-controls {
     flex-direction: row;
+
     align-items: center;
   }
 
@@ -720,6 +944,7 @@ button:disabled {
 
   .primary-button {
     width: auto;
+
     min-width: 170px;
   }
 
@@ -729,7 +954,6 @@ button:disabled {
 
     gap: 18px;
   }
-
 }
 
 
@@ -743,18 +967,6 @@ button:disabled {
     grid-template-columns:
       repeat(4, minmax(0, 1fr));
   }
-
-}
-
-
-/* ==========================================================
-   ACCESSIBILITY
-   ========================================================== */
-
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
 }
 
 
@@ -768,8 +980,9 @@ input:focus-visible {
   *::before,
   *::after {
     scroll-behavior: auto !important;
+
     transition-duration: 0.01ms !important;
+
     animation-duration: 0.01ms !important;
   }
-
 }
