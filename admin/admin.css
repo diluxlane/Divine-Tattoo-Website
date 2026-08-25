@@ -986,3 +986,143 @@ input:focus-visible {
     animation-duration: 0.01ms !important;
   }
 }
+/* =====================================================
+   PORTFOLIO POSITION EDITOR
+   ===================================================== */
+
+.portfolio-order {
+  cursor: pointer;
+  user-select: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.portfolio-order:hover {
+  opacity: 0.75;
+}
+
+.portfolio-order:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* =====================================================
+   POSITION INPUT
+   ===================================================== */
+
+.portfolio-order-input {
+  width: 4.5rem;
+  min-width: 4.5rem;
+
+  box-sizing: border-box;
+
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+
+  padding: 0.2rem 0.4rem;
+
+  text-align: center;
+
+  outline: none;
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* Remove browser number-input arrows */
+
+.portfolio-order-input::-webkit-inner-spin-button,
+.portfolio-order-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+
+/* Focus */
+
+.portfolio-order-input:focus {
+  border-color: currentColor;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(255, 255, 255, 0.08);
+}
+
+
+/* =====================================================
+   SAVING STATE
+   ===================================================== */
+
+.portfolio-order.position-saving {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+
+/* =====================================================
+   ERROR STATE
+   ===================================================== */
+
+.portfolio-order.position-error {
+  animation:
+    portfolio-position-error 0.25s ease;
+}
+
+
+@keyframes portfolio-position-error {
+
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .portfolio-order-input {
+    width: 4rem;
+    min-width: 4rem;
+
+    min-height: 2.2rem;
+
+    font-size: 1rem;
+
+    padding:
+      0.3rem
+      0.45rem;
+  }
+
+}
