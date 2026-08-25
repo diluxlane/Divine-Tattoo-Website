@@ -444,4 +444,36 @@ button:disabled {
   .login-card h2 {
     font-size: 27px;
   }
+}.portfolio-preview {
+  display: block;
+
+  width: 100%;
+
+  height: 260px;
+
+  object-fit: cover;
+
+  background: #11110f;
+}
+
+.portfolio-info {
+  padding: 12px 14px;
+
+  border-top:
+    1px solid
+    #302c25;
+}
+
+.portfolio-status {
+  color: #bfa66a;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
 }
