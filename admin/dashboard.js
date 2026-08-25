@@ -181,6 +181,10 @@ async function renderPortfolio() {
       portfolioItems[index];
 
 
+    const position =
+      index + 1;
+
+
     const card =
       document.createElement(
         "article"
@@ -262,7 +266,7 @@ async function renderPortfolio() {
       signedData.signedUrl;
 
     image.alt =
-      `Portfolio image ${index + 1}`;
+      `Portfolio image ${position}`;
 
     image.loading =
       "lazy";
@@ -284,6 +288,10 @@ async function renderPortfolio() {
       "portfolio-info";
 
 
+    // -----------------------------------------------
+    // Editable order
+    // -----------------------------------------------
+
     const order =
       document.createElement(
         "div"
@@ -293,8 +301,53 @@ async function renderPortfolio() {
       "portfolio-order";
 
     order.textContent =
-      `#${index + 1}`;
+      `#${position}`;
 
+    order.title =
+      "Click to change position";
+
+    order.tabIndex =
+      0;
+
+    order.setAttribute(
+      "role",
+      "button"
+    );
+
+
+    order.addEventListener(
+      "click",
+      () =>
+        startPositionEdit(
+          order,
+          item
+        )
+    );
+
+
+    order.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+
+          event.preventDefault();
+
+          startPositionEdit(
+            order,
+            item
+          );
+        }
+      }
+    );
+
+
+    // -----------------------------------------------
+    // Status
+    // -----------------------------------------------
 
     const status =
       document.createElement(
@@ -309,6 +362,10 @@ async function renderPortfolio() {
         ? "Published"
         : "Unpublished";
 
+
+    // -----------------------------------------------
+    // Controls
+    // -----------------------------------------------
 
     const controls =
       document.createElement(
@@ -413,6 +470,440 @@ async function renderPortfolio() {
 
     portfolioGrid.appendChild(
       card
+    );
+  }
+}
+
+
+// =====================================================
+// NUMERIC POSITION EDITING
+// =====================================================
+
+function startPositionEdit(
+  orderElement,
+  item
+) {
+
+  // Prevent opening multiple editors
+  // on the same element.
+
+  if (
+    orderElement.dataset.editing === "true"
+  ) {
+    return;
+  }
+
+
+  const currentPosition =
+    portfolioItems.findIndex(
+      portfolioItem =>
+        portfolioItem.idid === item.idid
+    ) + 1;
+
+
+  if (
+    currentPosition < 1
+  ) {
+    return;
+  }
+
+
+  orderElement.dataset.editing =
+    "true";
+
+
+  const input =
+    document.createElement(
+      "input"
+    );
+
+  input.type =
+    "number";
+
+  input.inputMode =
+    "numeric";
+
+  input.pattern =
+    "[0-9]*";
+
+  input.min =
+    "1";
+
+  input.max =
+    String(
+      portfolioItems.length
+    );
+
+  input.step =
+    "1";
+
+  input.value =
+    String(
+      currentPosition
+    );
+
+  input.className =
+    "portfolio-order-input";
+
+  input.setAttribute(
+    "aria-label",
+    `Portfolio position, current position ${currentPosition}`
+  );
+
+
+  orderElement.innerHTML = "";
+
+  orderElement.appendChild(
+    input
+  );
+
+
+  input.focus();
+
+  input.select();
+
+
+  let finished =
+    false;
+
+
+  const cancelEdit =
+    () => {
+
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+
+      orderElement.dataset.editing =
+        "false";
+
+      orderElement.textContent =
+        `#${getCurrentPosition(item)}`;
+    };
+
+
+  const submitEdit =
+    async () => {
+
+      if (finished) {
+        return;
+      }
+
+      const targetPosition =
+        Number(
+          input.value
+        );
+
+
+      if (
+        !Number.isInteger(
+          targetPosition
+        )
+      ) {
+
+        showPositionError(
+          orderElement,
+          input,
+          "Enter a whole number."
+        );
+
+        return;
+      }
+
+
+      if (
+        targetPosition < 1 ||
+        targetPosition > portfolioItems.length
+      ) {
+
+        showPositionError(
+          orderElement,
+          input,
+          `Enter a position from 1 to ${portfolioItems.length}.`
+        );
+
+        return;
+      }
+
+
+      const current =
+        getCurrentPosition(item);
+
+
+      if (
+        targetPosition === current
+      ) {
+
+        cancelEdit();
+
+        return;
+      }
+
+
+      finished = true;
+
+      orderElement.dataset.editing =
+        "false";
+
+
+      await movePortfolioItemToPosition(
+        item,
+        targetPosition,
+        orderElement,
+        current
+      );
+    };
+
+
+  input.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        submitEdit();
+
+      } else if (
+        event.key === "Escape"
+      ) {
+
+        event.preventDefault();
+
+        cancelEdit();
+      }
+    }
+  );
+
+
+  input.addEventListener(
+    "blur",
+    () => {
+
+      // Do not automatically reorder on blur.
+      // If the user taps elsewhere without pressing
+      // Enter, simply cancel the edit.
+
+      if (!finished) {
+        cancelEdit();
+      }
+    }
+  );
+}
+
+
+// =====================================================
+// GET CURRENT POSITION
+// =====================================================
+
+function getCurrentPosition(
+  item
+) {
+
+  const index =
+    portfolioItems.findIndex(
+      portfolioItem =>
+        portfolioItem.idid === item.idid
+    );
+
+
+  return index + 1;
+}
+
+
+// =====================================================
+// POSITION ERROR
+// =====================================================
+
+function showPositionError(
+  orderElement,
+  input,
+  message
+) {
+
+  orderElement.classList.add(
+    "position-error"
+  );
+
+  input.setAttribute(
+    "aria-invalid",
+    "true"
+  );
+
+  input.title =
+    message;
+
+  input.focus();
+
+  input.select();
+
+
+  setTimeout(
+    () => {
+
+      orderElement.classList.remove(
+        "position-error"
+      );
+
+    },
+    2000
+  );
+}
+
+
+// =====================================================
+// MOVE ITEM TO POSITION
+// =====================================================
+
+async function movePortfolioItemToPosition(
+  item,
+  targetPosition,
+  orderElement,
+  previousPosition
+) {
+
+  orderElement.classList.add(
+    "position-saving"
+  );
+
+
+  portfolioMessage.textContent =
+    "Saving order...";
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabase.rpc(
+        "move_portfolio_item_to_position",
+        {
+          p_item_id:
+            item.idid,
+
+          p_target_position:
+            targetPosition
+        }
+      );
+
+
+    if (
+      error
+    ) {
+      throw error;
+    }
+
+
+    // ---------------------------------------------
+    // Use the database response as the source of truth.
+    // ---------------------------------------------
+
+    if (
+      Array.isArray(data)
+    ) {
+
+      const orderMap =
+        new Map(
+          data.map(
+            row => [
+              row.idid,
+              row.display_order
+            ]
+          )
+        );
+
+
+      portfolioItems =
+        portfolioItems
+          .map(
+            portfolioItem => {
+
+              const newOrder =
+                orderMap.get(
+                  portfolioItem.idid
+                );
+
+
+              if (
+                Number.isInteger(
+                  newOrder
+                )
+              ) {
+
+                portfolioItem.display_order =
+                  newOrder;
+              }
+
+
+              return portfolioItem;
+            }
+          )
+          .sort(
+            (a, b) =>
+              a.display_order -
+              b.display_order
+          );
+    }
+
+
+    // ---------------------------------------------
+    // Render updated order without page reload.
+    // ---------------------------------------------
+
+    await renderPortfolio();
+
+
+    portfolioMessage.textContent =
+      `Moved #${previousPosition} to #${targetPosition}.`;
+
+
+    setTimeout(
+      () => {
+
+        if (
+          portfolioItems.length > 0
+        ) {
+
+          portfolioMessage.textContent =
+            "";
+        }
+
+      },
+      1500
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Position update error:",
+      error
+    );
+
+
+    orderElement.classList.remove(
+      "position-saving"
+    );
+
+
+    orderElement.textContent =
+      `#${getCurrentPosition(item)}`;
+
+
+    portfolioMessage.textContent =
+      "Unable to change portfolio order.";
+
+
+    alert(
+      error.message ||
+      "Unable to change portfolio order."
     );
   }
 }
@@ -618,7 +1109,7 @@ function handleDragOver(event) {
 }
 
 
-function handleDrop(event) {
+async function handleDrop(event) {
 
   event.preventDefault();
 
@@ -659,23 +1150,20 @@ function handleDrop(event) {
   }
 
 
-  const movedItem =
-    portfolioItems.splice(
-      fromIndex,
-      1
-    )[0];
+  const draggedItem =
+    portfolioItems[fromIndex];
 
 
-  portfolioItems.splice(
-    toIndex,
-    0,
-    movedItem
+  const targetPosition =
+    toIndex + 1;
+
+
+  await movePortfolioItemToPosition(
+    draggedItem,
+    targetPosition,
+    null,
+    fromIndex + 1
   );
-
-
-  renderPortfolio();
-
-  saveOrder();
 }
 
 
@@ -690,7 +1178,13 @@ function handleDragEnd(event) {
 
 
 // =====================================================
-// SAVE ORDER
+// LEGACY SAVE ORDER
+// =====================================================
+//
+// Kept as a compatibility helper.
+// New drag-and-drop and numeric ordering use the
+// atomic Supabase reorder function above.
+//
 // =====================================================
 
 async function saveOrder() {
@@ -743,12 +1237,14 @@ async function saveOrder() {
     portfolioMessage.textContent =
       "Order saved.";
 
+
     setTimeout(
       () => {
 
         if (
           portfolioItems.length > 0
         ) {
+
           portfolioMessage.textContent =
             "";
         }
@@ -877,17 +1373,17 @@ async function uploadImages() {
       const {
         error: storageError
       } =
-        await supabase.storage
-          .from("portfolio")
-          .upload(
-            filePath,
-            file,
-            {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: file.type
-            }
-          );
+      await supabase.storage
+        .from("portfolio")
+        .upload(
+          filePath,
+          file,
+          {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type
+          }
+        );
 
 
       if (
