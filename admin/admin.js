@@ -1,997 +1,220 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 /* ==========================================================
-   DIVINE TATTOO — ADMIN CMS
-   Premium login + mobile-first portfolio management
+   DIVINE TATTOO — ADMIN LOGIN
+   Supabase authentication
    ========================================================== */
 
-:root {
-  --bg: #080808;
-  --surface: #111111;
-  --surface-2: #171717;
-  --surface-3: #202020;
+const SUPABASE_URL =
+  "https://igjsnwpcyjgjjhpmpkvi.supabase.co";
 
-  --text: #f5f5f5;
-  --muted: #a7a7a7;
-  --border: rgba(255, 255, 255, 0.10);
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_NJdvsjVqLBXDkRyJhKp-WA_-M-w0UEX";
 
-  --gold: #d4af37;
-  --gold-soft: rgba(212, 175, 55, 0.14);
-
-  --danger: #e56b6f;
-  --success: #75c98a;
-
-  --radius: 14px;
-  --shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
-}
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
 
 /* ==========================================================
-   RESET
+   ELEMENTS
    ========================================================== */
 
-* {
-  box-sizing: border-box;
-}
+const loginForm =
+  document.getElementById("loginForm");
 
-html {
-  min-height: 100%;
-  background: var(--bg);
-}
+const emailInput =
+  document.getElementById("email");
 
-body {
-  margin: 0;
-  min-height: 100vh;
+const passwordInput =
+  document.getElementById("password");
 
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(212, 175, 55, 0.07),
-      transparent 35%
-    ),
-    var(--bg);
+const loginButton =
+  document.getElementById("loginButton");
 
-  color: var(--text);
+const loginMessage =
+  document.getElementById("loginMessage");
 
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
 
-  line-height: 1.5;
-}
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
 
-button,
-input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
+function showMessage(message) {
+  loginMessage.textContent = message;
 }
 
 
 /* ==========================================================
-   PREMIUM LOGIN PAGE
+   BUTTON STATE
    ========================================================== */
 
-.login-page {
-  position: relative;
+function setLoading(isLoading) {
+  loginButton.disabled = isLoading;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  const buttonText =
+    loginButton.querySelector(".button-text");
 
-  width: 100%;
-  min-height: 100vh;
+  if (!buttonText) {
+    return;
+  }
 
-  padding: 24px;
-
-  overflow: hidden;
+  buttonText.textContent =
+    isLoading
+      ? "Signing In..."
+      : "Sign In";
 }
 
 
 /* ==========================================================
-   LOGIN BACKGROUND
+   CHECK EXISTING SESSION
    ========================================================== */
 
-.login-background {
-  position: fixed;
-  inset: 0;
+async function checkExistingSession() {
 
-  overflow: hidden;
+  const {
+    data: {
+      session
+    },
+    error
+  } = await supabase.auth.getSession();
 
-  pointer-events: none;
-}
 
-.background-orb {
-  position: absolute;
+  if (error) {
 
-  width: 420px;
-  height: 420px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(212, 175, 55, 0.10),
-      transparent 68%
+    console.error(
+      "Session check error:",
+      error
     );
 
-  filter: blur(20px);
-}
+    return;
+  }
 
-.background-orb-one {
-  top: -220px;
-  left: -180px;
-}
 
-.background-orb-two {
-  right: -220px;
-  bottom: -240px;
+  if (session) {
 
-  opacity: 0.55;
-}
-
-
-/* ==========================================================
-   LOGIN CARD
-   ========================================================== */
-
-.login-card {
-  position: relative;
-  z-index: 1;
-
-  width: min(100%, 460px);
-
-  padding: 34px 26px 24px;
-
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 18px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.018)
-    ),
-    rgba(10, 10, 10, 0.94);
-
-  box-shadow:
-    0 30px 90px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-
-/* ==========================================================
-   BRAND
-   ========================================================== */
-
-.brand-area {
-  text-align: center;
-}
-
-.brand {
-  display: inline-flex;
-  flex-direction: column;
-
-  align-items: center;
-
-  line-height: 0.85;
-}
-
-.brand h1 {
-  margin: 0;
-
-  color: var(--text);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2.6rem, 12vw, 4rem);
-  font-weight: 400;
-  letter-spacing: -0.04em;
-}
-
-.brand span {
-  margin-top: 7px;
-
-  color: var(--gold);
-
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-
-  transform: translateX(0.21em);
-}
-
-.brand-line {
-  width: 46px;
-  height: 1px;
-
-  margin: 25px auto 18px;
-
-  background: var(--gold);
-}
-
-.eyebrow {
-  margin: 0;
-
-  color: var(--gold);
-
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-}
-
-
-/* ==========================================================
-   LOGIN INTRO
-   ========================================================== */
-
-.login-intro {
-  margin-top: 42px;
-}
-
-.intro-label {
-  margin: 0 0 8px;
-
-  color: var(--muted);
-
-  font-size: 0.67rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-.login-intro h2 {
-  margin: 0;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2rem, 8vw, 2.8rem);
-  font-weight: 400;
-  line-height: 1.05;
-}
-
-.subtitle {
-  max-width: 380px;
-
-  margin: 12px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.88rem;
-}
-
-
-/* ==========================================================
-   LOGIN FORM
-   ========================================================== */
-
-#loginForm {
-  margin-top: 30px;
-}
-
-.field {
-  margin-bottom: 18px;
-}
-
-.field label {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color: #d8d8d8;
-
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.field input {
-  display: block;
-
-  width: 100%;
-
-  min-height: 50px;
-
-  padding: 0 15px;
-
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-
-  outline: none;
-
-  background: rgba(255, 255, 255, 0.035);
-  color: var(--text);
-
-  font-size: 0.9rem;
-
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.field input::placeholder {
-  color: #6f6f6f;
-}
-
-.field input:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-}
-
-.field input:focus {
-  border-color: rgba(212, 175, 55, 0.65);
-
-  background: rgba(212, 175, 55, 0.035);
-
-  box-shadow:
-    0 0 0 3px rgba(212, 175, 55, 0.08);
-}
-
-
-/* ==========================================================
-   SIGN IN BUTTON
-   ========================================================== */
-
-#loginButton {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  width: 100%;
-  min-height: 52px;
-
-  margin-top: 8px;
-
-  padding: 0 17px;
-
-  border: 1px solid var(--gold);
-  border-radius: 10px;
-
-  background: var(--gold);
-  color: #101010;
-
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-
-  transition:
-    transform 0.15s ease,
-    filter 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-#loginButton:hover {
-  filter: brightness(1.08);
-
-  box-shadow:
-    0 8px 30px rgba(212, 175, 55, 0.16);
-}
-
-#loginButton:active {
-  transform: translateY(1px);
-}
-
-.button-arrow {
-  font-size: 1.2rem;
-  font-weight: 400;
-}
-
-
-/* ==========================================================
-   LOGIN MESSAGE
-   ========================================================== */
-
-.message {
-  min-height: 22px;
-
-  margin: 12px 0 0;
-
-  color: var(--danger);
-
-  font-size: 0.78rem;
-
-  text-align: center;
-}
-
-
-/* ==========================================================
-   LOGIN FOOTER
-   ========================================================== */
-
-.login-footer {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  margin-top: 32px;
-}
-
-.login-footer span {
-  flex: 1;
-
-  height: 1px;
-
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.login-footer p {
-  margin: 0;
-
-  color: #666;
-
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-
-  white-space: nowrap;
-}
-
-.login-footer p span {
-  display: inline;
-
-  background: none;
-
-  color: var(--gold);
-}
-
-
-/* ==========================================================
-   ADMIN SHELL
-   ========================================================== */
-
-.admin-shell {
-  width: min(1180px, calc(100% - 32px));
-
-  margin: 0 auto;
-
-  padding: 32px 0 60px;
-}
-
-
-/* ==========================================================
-   ADMIN HEADER
-   ========================================================== */
-
-.admin-header {
-  display: flex;
-  flex-direction: column;
-
-  gap: 24px;
-
-  padding: 10px 0 32px;
-
-  border-bottom: 1px solid var(--border);
-}
-
-.admin-eyebrow {
-  margin: 0 0 5px;
-
-  color: var(--gold);
-
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-}
-
-.admin-header h1 {
-  margin: 0;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2.2rem, 8vw, 4rem);
-
-  font-weight: 500;
-
-  line-height: 1;
-}
-
-.admin-subtitle {
-  max-width: 560px;
-
-  margin: 12px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.95rem;
-}
-
-
-/* ==========================================================
-   LOGOUT
-   ========================================================== */
-
-.logout-button {
-  width: 100%;
-
-  padding: 12px 18px;
-
-  border: 1px solid var(--border);
-  border-radius: 999px;
-
-  background: transparent;
-
-  color: var(--text);
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.logout-button:hover {
-  background: var(--surface-2);
-
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-
-/* ==========================================================
-   SECTIONS
-   ========================================================== */
-
-.upload-section,
-.portfolio-section {
-  margin-top: 28px;
-
-  padding: 22px;
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0.01)
+    window.location.replace(
+      "./dashboard.html"
     );
 
-  box-shadow: var(--shadow);
-}
-
-.section-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-
-  gap: 16px;
-
-  margin-bottom: 18px;
-}
-
-.section-heading h2 {
-  margin: 0;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 1.45rem;
-
-  font-weight: 500;
-}
-
-.section-heading p {
-  margin: 6px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.86rem;
-}
-
-
-/* ==========================================================
-   UPLOAD
-   ========================================================== */
-
-.upload-controls {
-  display: flex;
-  flex-direction: column;
-
-  gap: 12px;
-}
-
-#imageInput {
-  width: 100%;
-
-  padding: 13px;
-
-  border: 1px dashed rgba(212, 175, 55, 0.45);
-
-  border-radius: 12px;
-
-  background: var(--surface);
-
-  color: var(--muted);
-}
-
-#imageInput::file-selector-button {
-  margin-right: 10px;
-
-  padding: 9px 13px;
-
-  border: 0;
-
-  border-radius: 8px;
-
-  background: var(--gold);
-
-  color: #111;
-
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
-
-/* ==========================================================
-   PRIMARY BUTTON
-   ========================================================== */
-
-.primary-button {
-  width: 100%;
-
-  padding: 13px 18px;
-
-  border: 1px solid var(--gold);
-
-  border-radius: 10px;
-
-  background: var(--gold);
-
-  color: #111;
-
-  font-weight: 800;
-
-  transition:
-    transform 0.15s ease,
-    filter 0.2s ease;
-}
-
-.primary-button:hover {
-  filter: brightness(1.08);
-}
-
-.primary-button:active {
-  transform: translateY(1px);
-}
-
-
-/* ==========================================================
-   MESSAGES
-   ========================================================== */
-
-#uploadMessage {
-  color: var(--gold);
-}
-
-
-/* ==========================================================
-   PORTFOLIO GRID
-   ========================================================== */
-
-.portfolio-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 12px;
-}
-
-
-/* ==========================================================
-   PORTFOLIO CARD
-   ========================================================== */
-
-.portfolio-card {
-  position: relative;
-
-  overflow: hidden;
-
-  border: 1px solid var(--border);
-
-  border-radius: 12px;
-
-  background: var(--surface);
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.portfolio-card:hover {
-  border-color: rgba(212, 175, 55, 0.45);
-}
-
-.portfolio-card.dragging {
-  opacity: 0.35;
-
-  transform: scale(0.97);
-}
-
-
-/* ==========================================================
-   DRAG-AND-DROP HINT
-   ========================================================== */
-
-.portfolio-card::before {
-  content: "↕ Drag to reorder";
-
-  position: absolute;
-
-  top: 10px;
-  left: 10px;
-
-  z-index: 5;
-
-  padding: 5px 9px;
-
-  border: 1px solid rgba(255, 255, 255, 0.14);
-
-  border-radius: 999px;
-
-  background: rgba(0, 0, 0, 0.72);
-
-  color: #ffffff;
-
-  font-size: 0.68rem;
-
-  font-weight: 700;
-
-  line-height: 1;
-
-  pointer-events: none;
-
-  backdrop-filter: blur(8px);
-
-  -webkit-backdrop-filter: blur(8px);
-}
-
-
-/* ==========================================================
-   IMAGE
-   ========================================================== */
-
-.portfolio-preview {
-  display: block;
-
-  width: 100%;
-
-  aspect-ratio: 1 / 1;
-
-  object-fit: cover;
-
-  background: #080808;
-}
-
-
-/* ==========================================================
-   CARD INFORMATION
-   ========================================================== */
-
-.portfolio-info {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 9px;
-
-  padding: 12px;
-}
-
-.portfolio-order {
-  display: inline-flex;
-
-  align-items: center;
-
-  width: fit-content;
-
-  padding: 4px 9px;
-
-  border-radius: 999px;
-
-  background: var(--gold-soft);
-
-  color: var(--gold);
-
-  font-size: 0.75rem;
-
-  font-weight: 800;
-}
-
-.portfolio-status {
-  color: var(--muted);
-
-  font-size: 0.74rem;
-
-  font-weight: 600;
-}
-
-
-/* ==========================================================
-   CONTROLS
-   ========================================================== */
-
-.portfolio-controls {
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 7px;
-}
-
-.portfolio-controls button {
-  min-height: 38px;
-
-  padding: 8px;
-
-  border-radius: 8px;
-
-  font-size: 0.75rem;
-
-  font-weight: 700;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
-}
-
-
-/* Publish */
-
-.publish-button {
-  border: 1px solid rgba(212, 175, 55, 0.35);
-
-  background: var(--gold-soft);
-
-  color: var(--gold);
-}
-
-.publish-button:hover {
-  background: rgba(212, 175, 55, 0.22);
-}
-
-
-/* Delete */
-
-.delete-button {
-  border: 1px solid rgba(229, 107, 111, 0.25);
-
-  background: rgba(229, 107, 111, 0.08);
-
-  color: var(--danger);
-}
-
-.delete-button:hover {
-  background: rgba(229, 107, 111, 0.16);
-}
-
-
-/* ==========================================================
-   DESKTOP
-   ========================================================== */
-
-@media (min-width: 700px) {
-
-  .login-card {
-    padding: 46px 46px 28px;
   }
-
-  .admin-shell {
-    padding-top: 48px;
-  }
-
-  .admin-header {
-    flex-direction: row;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-  }
-
-  .logout-button {
-    width: auto;
-  }
-
-  .upload-section,
-  .portfolio-section {
-    padding: 28px;
-  }
-
-  .upload-controls {
-    flex-direction: row;
-
-    align-items: center;
-  }
-
-  #imageInput {
-    flex: 1;
-  }
-
-  .primary-button {
-    width: auto;
-
-    min-width: 170px;
-  }
-
-  .portfolio-grid {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-
-    gap: 18px;
-  }
-
 }
 
 
 /* ==========================================================
-   LARGE DESKTOP
+   LOGIN
    ========================================================== */
 
-@media (min-width: 1050px) {
+loginForm.addEventListener(
+  "submit",
+  async (event) => {
 
-  .portfolio-grid {
-    grid-template-columns:
-      repeat(4, minmax(0, 1fr));
+    event.preventDefault();
+
+    showMessage("");
+
+
+    const email =
+      emailInput.value.trim();
+
+    const password =
+      passwordInput.value;
+
+
+    if (!email) {
+
+      showMessage(
+        "Please enter your email."
+      );
+
+      emailInput.focus();
+
+      return;
+    }
+
+
+    if (!password) {
+
+      showMessage(
+        "Please enter your password."
+      );
+
+      passwordInput.focus();
+
+      return;
+    }
+
+
+    setLoading(true);
+
+
+    try {
+
+      const {
+        data,
+        error
+      } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+
+      if (error) {
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+        showMessage(
+          "Invalid email or password."
+        );
+
+        return;
+      }
+
+
+      if (!data.session) {
+
+        showMessage(
+          "Login failed. No session was created."
+        );
+
+        return;
+      }
+
+
+      window.location.replace(
+        "./dashboard.html"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Unexpected login error:",
+        error
+      );
+
+      showMessage(
+        "Something went wrong. Please try again."
+      );
+
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
   }
-
-}
+);
 
 
 /* ==========================================================
-   ACCESSIBILITY
+   START
    ========================================================== */
 
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--gold);
-
-  outline-offset: 3px;
-}
-
-
-/* ==========================================================
-   REDUCED MOTION
-   ========================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-
-    transition-duration: 0.01ms !important;
-
-    animation-duration: 0.01ms !important;
-  }
-
-}
+checkExistingSession();
