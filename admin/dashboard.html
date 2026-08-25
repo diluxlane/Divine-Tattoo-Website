@@ -2,36 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Divine Tattoo — Portfolio Manager</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <link rel="stylesheet" href="admin.css">
+  <title>Portfolio CMS | Divine Tattoo</title>
+
+  <link
+    rel="stylesheet"
+    href="./admin.css"
+  >
 </head>
 
 <body class="auth-checking">
 
-  <div id="authLoading" class="auth-loading">
-    Checking authentication...
-  </div>
+  <main class="admin-shell">
 
-  <main class="dashboard-page">
+    <!-- HEADER -->
 
-    <header class="dashboard-header">
+    <header class="admin-header">
 
       <div>
-        <p class="eyebrow">DIVINE TATTOO</p>
+        <p class="admin-eyebrow">
+          DIVINE TATTOO
+        </p>
 
-        <h1>Portfolio Manager</h1>
+        <h1>
+          Portfolio
+        </h1>
 
-        <p class="subtitle">
-          Manage the images displayed in your portfolio.
+        <p class="admin-subtitle">
+          Manage the images displayed on your website.
         </p>
       </div>
 
       <button
         id="logoutButton"
         type="button"
+        class="logout-button"
       >
         Sign Out
       </button>
@@ -39,73 +49,97 @@
     </header>
 
 
-    <section class="dashboard-content">
+    <!-- UPLOAD -->
 
-      <div class="upload-card">
+    <section class="upload-section">
 
-        <h2>Add Portfolio Image</h2>
+      <div class="section-heading">
 
-        <p>
-          Upload a tattoo image to your private portfolio storage.
-        </p>
+        <div>
+          <h2>
+            Add Portfolio Images
+          </h2>
+
+          <p>
+            Upload JPG, PNG, or WebP images.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="upload-controls">
 
         <input
-          type="file"
           id="imageInput"
+          type="file"
           accept="image/jpeg,image/png,image/webp"
+          multiple
         >
 
         <button
           id="uploadButton"
           type="button"
+          class="primary-button"
         >
-          Upload Image
+          Upload Images
         </button>
-
-        <p
-          id="uploadMessage"
-          class="message"
-          aria-live="polite"
-        ></p>
 
       </div>
 
 
-      <section class="portfolio-section">
+      <p
+        id="uploadMessage"
+        class="message"
+        aria-live="polite"
+      ></p>
 
-        <div class="section-heading">
+    </section>
 
-          <div>
-            <p class="eyebrow">PORTFOLIO</p>
 
-            <h2>Your Images</h2>
-          </div>
+    <!-- PORTFOLIO -->
 
+    <section class="portfolio-section">
+
+      <div class="section-heading">
+
+        <div>
+          <h2>
+            Your Portfolio
+          </h2>
+
+          <p>
+            Drag images to change their order.
+          </p>
         </div>
 
-
-        <div
-          id="portfolioGrid"
-          class="portfolio-grid"
-        ></div>
+      </div>
 
 
-        <p
-          id="portfolioMessage"
-          class="message"
-          aria-live="polite"
-        ></p>
+      <p
+        id="portfolioMessage"
+        class="message"
+        aria-live="polite"
+      >
+        Loading portfolio...
+      </p>
 
-      </section>
+
+      <div
+        id="portfolioGrid"
+        class="portfolio-grid"
+      ></div>
 
     </section>
 
   </main>
 
 
+  <!-- Supabase / CMS JavaScript -->
+
   <script
     type="module"
-    src="dashboard.js"
+    src="./dashboard.js"
   ></script>
 
 </body>
