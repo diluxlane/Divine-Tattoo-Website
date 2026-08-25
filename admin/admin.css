@@ -733,46 +733,6 @@ button:disabled {
   border-color: rgba(212, 175, 55, 0.45);
 }
 
-.portfolio-card.dragging {
-  opacity: 0.35;
-
-  transform: scale(0.97);
-}
-
-
-/* ==========================================================
-   DRAG HINT
-   ========================================================== */
-
-.portfolio-card::before {
-  content: "↕ Drag to reorder";
-
-  position: absolute;
-
-  top: 10px;
-  left: 10px;
-
-  z-index: 5;
-
-  padding: 5px 9px;
-
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-
-  background: rgba(0, 0, 0, 0.72);
-  color: #ffffff;
-
-  font-size: 0.68rem;
-  font-weight: 700;
-
-  line-height: 1;
-
-  pointer-events: none;
-
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
 
 /* ==========================================================
    IMAGE
@@ -804,6 +764,11 @@ button:disabled {
   padding: 12px;
 }
 
+
+/* ==========================================================
+   PORTFOLIO POSITION EDITOR
+   ========================================================== */
+
 .portfolio-order {
   display: inline-flex;
   align-items: center;
@@ -819,13 +784,132 @@ button:disabled {
 
   font-size: 0.75rem;
   font-weight: 800;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
+
+.portfolio-order:hover {
+  opacity: 0.75;
+}
+
+.portfolio-order:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* ==========================================================
+   POSITION INPUT
+   ========================================================== */
+
+.portfolio-order-input {
+  width: 4.5rem;
+  min-width: 4.5rem;
+
+  box-sizing: border-box;
+
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+
+  padding: 0.2rem 0.4rem;
+
+  text-align: center;
+
+  outline: none;
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* Remove browser number-input arrows */
+
+.portfolio-order-input::-webkit-inner-spin-button,
+.portfolio-order-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+
+/* Focus */
+
+.portfolio-order-input:focus {
+  border-color: currentColor;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(255, 255, 255, 0.08);
+}
+
+
+/* ==========================================================
+   PORTFOLIO STATUS
+   ========================================================== */
 
 .portfolio-status {
   color: var(--muted);
 
   font-size: 0.74rem;
   font-weight: 600;
+}
+
+
+/* ==========================================================
+   SAVING STATE
+   ========================================================== */
+
+.portfolio-order.position-saving {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+
+/* ==========================================================
+   ERROR STATE
+   ========================================================== */
+
+.portfolio-order.position-error {
+  animation:
+    portfolio-position-error 0.25s ease;
+}
+
+
+@keyframes portfolio-position-error {
+
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 
@@ -971,144 +1055,8 @@ input:focus-visible {
 
 
 /* ==========================================================
-   REDUCED MOTION
+   MOBILE POSITION INPUT
    ========================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-
-    transition-duration: 0.01ms !important;
-
-    animation-duration: 0.01ms !important;
-  }
-}
-/* =====================================================
-   PORTFOLIO POSITION EDITOR
-   ===================================================== */
-
-.portfolio-order {
-  cursor: pointer;
-  user-select: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.portfolio-order:hover {
-  opacity: 0.75;
-}
-
-.portfolio-order:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-
-
-/* =====================================================
-   POSITION INPUT
-   ===================================================== */
-
-.portfolio-order-input {
-  width: 4.5rem;
-  min-width: 4.5rem;
-
-  box-sizing: border-box;
-
-  font: inherit;
-  font-weight: inherit;
-  color: inherit;
-
-  background: transparent;
-  border: 1px solid currentColor;
-  border-radius: 6px;
-
-  padding: 0.2rem 0.4rem;
-
-  text-align: center;
-
-  outline: none;
-
-  appearance: textfield;
-  -moz-appearance: textfield;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
-}
-
-
-/* Remove browser number-input arrows */
-
-.portfolio-order-input::-webkit-inner-spin-button,
-.portfolio-order-input::-webkit-outer-spin-button {
-  margin: 0;
-  appearance: none;
-}
-
-
-/* Focus */
-
-.portfolio-order-input:focus {
-  border-color: currentColor;
-
-  box-shadow:
-    0 0 0 2px
-    rgba(255, 255, 255, 0.08);
-}
-
-
-/* =====================================================
-   SAVING STATE
-   ===================================================== */
-
-.portfolio-order.position-saving {
-  pointer-events: none;
-  opacity: 0.55;
-}
-
-
-/* =====================================================
-   ERROR STATE
-   ===================================================== */
-
-.portfolio-order.position-error {
-  animation:
-    portfolio-position-error 0.25s ease;
-}
-
-
-@keyframes portfolio-position-error {
-
-  0% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-3px);
-  }
-
-  50% {
-    transform: translateX(3px);
-  }
-
-  75% {
-    transform: translateX(-2px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
-
-/* =====================================================
-   MOBILE
-   ===================================================== */
 
 @media (max-width: 600px) {
 
@@ -1125,4 +1073,22 @@ input:focus-visible {
       0.45rem;
   }
 
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+
+    transition-duration: 0.01ms !important;
+
+    animation-duration: 0.01ms !important;
+  }
 }
