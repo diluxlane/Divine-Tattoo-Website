@@ -193,35 +193,8 @@ async function renderPortfolio() {
     card.className =
       "portfolio-card";
 
-    card.draggable = true;
-
     card.dataset.id =
       item.idid;
-
-
-    // -----------------------------------------------
-    // Drag events
-    // -----------------------------------------------
-
-    card.addEventListener(
-      "dragstart",
-      handleDragStart
-    );
-
-    card.addEventListener(
-      "dragover",
-      handleDragOver
-    );
-
-    card.addEventListener(
-      "drop",
-      handleDrop
-    );
-
-    card.addEventListener(
-      "dragend",
-      handleDragEnd
-    );
 
 
     // -----------------------------------------------
@@ -484,9 +457,6 @@ function startPositionEdit(
   item
 ) {
 
-  // Prevent opening multiple editors
-  // on the same element.
-
   if (
     orderElement.dataset.editing === "true"
   ) {
@@ -495,10 +465,7 @@ function startPositionEdit(
 
 
   const currentPosition =
-    portfolioItems.findIndex(
-      portfolioItem =>
-        portfolioItem.idid === item.idid
-    ) + 1;
+    getCurrentPosition(item);
 
 
   if (
@@ -590,6 +557,7 @@ function startPositionEdit(
       if (finished) {
         return;
       }
+
 
       const targetPosition =
         Number(
@@ -685,10 +653,6 @@ function startPositionEdit(
     "blur",
     () => {
 
-      // Do not automatically reorder on blur.
-      // If the user taps elsewhere without pressing
-      // Enter, simply cancel the edit.
-
       if (!finished) {
         cancelEdit();
       }
@@ -767,9 +731,12 @@ async function movePortfolioItemToPosition(
   previousPosition
 ) {
 
-  orderElement.classList.add(
-    "position-saving"
-  );
+  if (orderElement) {
+
+    orderElement.classList.add(
+      "position-saving"
+    );
+  }
 
 
   portfolioMessage.textContent =
@@ -802,7 +769,7 @@ async function movePortfolioItemToPosition(
 
 
     // ---------------------------------------------
-    // Use the database response as the source of truth.
+    // Database is the source of truth.
     // ---------------------------------------------
 
     if (
@@ -853,10 +820,6 @@ async function movePortfolioItemToPosition(
     }
 
 
-    // ---------------------------------------------
-    // Render updated order without page reload.
-    // ---------------------------------------------
-
     await renderPortfolio();
 
 
@@ -888,13 +851,15 @@ async function movePortfolioItemToPosition(
     );
 
 
-    orderElement.classList.remove(
-      "position-saving"
-    );
+    if (orderElement) {
 
+      orderElement.classList.remove(
+        "position-saving"
+      );
 
-    orderElement.textContent =
-      `#${getCurrentPosition(item)}`;
+      orderElement.textContent =
+        `#${getCurrentPosition(item)}`;
+    }
 
 
     portfolioMessage.textContent =
@@ -1080,195 +1045,6 @@ async function deletePortfolioItem(
 
 
 // =====================================================
-// DRAG AND DROP
-// =====================================================
-
-let draggedId = null;
-
-
-function handleDragStart(event) {
-
-  draggedId =
-    event.currentTarget.dataset.id;
-
-  event.currentTarget.classList.add(
-    "dragging"
-  );
-
-  event.dataTransfer.effectAllowed =
-    "move";
-}
-
-
-function handleDragOver(event) {
-
-  event.preventDefault();
-
-  event.dataTransfer.dropEffect =
-    "move";
-}
-
-
-async function handleDrop(event) {
-
-  event.preventDefault();
-
-  const targetCard =
-    event.currentTarget;
-
-  const targetId =
-    targetCard.dataset.id;
-
-
-  if (
-    !draggedId ||
-    draggedId === targetId
-  ) {
-    return;
-  }
-
-
-  const fromIndex =
-    portfolioItems.findIndex(
-      item =>
-        item.idid === draggedId
-    );
-
-
-  const toIndex =
-    portfolioItems.findIndex(
-      item =>
-        item.idid === targetId
-    );
-
-
-  if (
-    fromIndex === -1 ||
-    toIndex === -1
-  ) {
-    return;
-  }
-
-
-  const draggedItem =
-    portfolioItems[fromIndex];
-
-
-  const targetPosition =
-    toIndex + 1;
-
-
-  await movePortfolioItemToPosition(
-    draggedItem,
-    targetPosition,
-    null,
-    fromIndex + 1
-  );
-}
-
-
-function handleDragEnd(event) {
-
-  event.currentTarget.classList.remove(
-    "dragging"
-  );
-
-  draggedId = null;
-}
-
-
-// =====================================================
-// LEGACY SAVE ORDER
-// =====================================================
-//
-// Kept as a compatibility helper.
-// New drag-and-drop and numeric ordering use the
-// atomic Supabase reorder function above.
-//
-// =====================================================
-
-async function saveOrder() {
-
-  portfolioMessage.textContent =
-    "Saving order...";
-
-
-  try {
-
-    for (
-      let index = 0;
-      index < portfolioItems.length;
-      index++
-    ) {
-
-      const item =
-        portfolioItems[index];
-
-
-      const {
-        error
-      } =
-        await supabase
-          .from("portfolio")
-          .update({
-            display_order:
-              index + 1
-          })
-          .eq(
-            "idid",
-            item.idid
-          )
-          .eq(
-            "owner_id",
-            currentUser.id
-          );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      item.display_order =
-        index + 1;
-    }
-
-
-    portfolioMessage.textContent =
-      "Order saved.";
-
-
-    setTimeout(
-      () => {
-
-        if (
-          portfolioItems.length > 0
-        ) {
-
-          portfolioMessage.textContent =
-            "";
-        }
-
-      },
-      1500
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Order save error:",
-      error
-    );
-
-    portfolioMessage.textContent =
-      "Unable to save order.";
-
-    await loadPortfolio();
-  }
-}
-
-
-// =====================================================
 // UPLOAD MULTIPLE IMAGES
 // =====================================================
 
@@ -1373,17 +1149,17 @@ async function uploadImages() {
       const {
         error: storageError
       } =
-      await supabase.storage
-        .from("portfolio")
-        .upload(
-          filePath,
-          file,
-          {
-            cacheControl: "3600",
-            upsert: false,
-            contentType: file.type
-          }
-        );
+        await supabase.storage
+          .from("portfolio")
+          .upload(
+            filePath,
+            file,
+            {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: file.type
+            }
+          );
 
 
       if (
