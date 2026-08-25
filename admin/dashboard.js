@@ -11,116 +11,88 @@ const supabase = createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-
-// =========================
-// ELEMENTS
-// =========================
-
-const logoutButton =
-  document.getElementById("logoutButton");
-
-const uploadButton =
-  document.getElementById("uploadButton");
-
-const imageInput =
-  document.getElementById("imageInput");
-
-const uploadMessage =
-  document.getElementById("uploadMessage");
-
 const portfolioGrid =
   document.getElementById("portfolioGrid");
 
 const portfolioMessage =
   document.getElementById("portfolioMessage");
 
+const imageInput =
+  document.getElementById("imageInput");
 
-// =========================
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const uploadMessage =
+  document.getElementById("uploadMessage");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+let currentUser = null;
+let portfolioItems = [];
+
+
+// =====================================================
 // AUTHENTICATION
-// =========================
+// =====================================================
 
-async function getAuthenticatedUser() {
+async function requireUser() {
 
   const {
-    data: { session },
+    data: {
+      session
+    },
     error
   } = await supabase.auth.getSession();
 
-  if (error) {
-    console.error(
-      "Session error:",
-      error
-    );
-
+  if (
+    error ||
+    !session
+  ) {
     window.location.replace("./");
-
-    return null;
-  }
-
-  if (!session) {
-    window.location.replace("./");
-
     return null;
   }
 
   const {
-    data: { user },
+    data: {
+      user
+    },
     error: userError
   } = await supabase.auth.getUser();
 
-  if (userError || !user) {
+  if (
+    userError ||
+    !user
+  ) {
     window.location.replace("./");
-
     return null;
   }
-
-  document.body.classList.remove(
-    "auth-checking"
-  );
 
   return user;
 }
 
 
-// =========================
+// =====================================================
 // LOGOUT
-// =========================
+// =====================================================
 
-async function logout() {
+logoutButton.addEventListener(
+  "click",
+  async () => {
 
-  logoutButton.disabled = true;
+    await supabase.auth.signOut();
 
-  logoutButton.textContent =
-    "Signing Out...";
-
-  const {
-    error
-  } = await supabase.auth.signOut();
-
-  if (error) {
-
-    console.error(
-      "Logout error:",
-      error
-    );
-
-    logoutButton.disabled = false;
-
-    logoutButton.textContent =
-      "Sign Out";
-
-    return;
+    window.location.replace("./");
   }
-
-  window.location.replace("./");
-}
+);
 
 
-// =========================
+// =====================================================
 // LOAD PORTFOLIO
-// =========================
+// =====================================================
 
-async function loadPortfolio(user) {
+async function loadPortfolio() {
 
   portfolioMessage.textContent =
     "Loading portfolio...";
@@ -128,34 +100,37 @@ async function loadPortfolio(user) {
   portfolioGrid.innerHTML = "";
 
 
-  // IMPORTANT:
-  // Only request records belonging
-  // to the authenticated user.
-
   const {
     data,
     error
-  } = await supabase
-    .from("portfolio")
-    .select(
-      "idid, image_path, published, created_at"
-    )
-    .eq(
-      "owner_id",
-      user.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending: false
-      }
-    );
+  } =
+    await supabase
+      .from("portfolio")
+      .select(
+        "idid, owner_id, image_path, published, display_order, created_at"
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .order(
+        "display_order",
+        {
+          ascending: true
+        }
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
 
 
   if (error) {
 
     console.error(
-      "Portfolio load error:",
+      "Portfolio error:",
       error
     );
 
@@ -166,9 +141,12 @@ async function loadPortfolio(user) {
   }
 
 
+  portfolioItems =
+    data || [];
+
+
   if (
-    !data ||
-    data.length === 0
+    portfolioItems.length === 0
   ) {
 
     portfolioMessage.textContent =
@@ -180,11 +158,71 @@ async function loadPortfolio(user) {
 
   portfolioMessage.textContent = "";
 
+  await renderPortfolio();
+}
 
-  // Create a temporary signed URL
-  // for each private Storage object.
 
-  for (const item of data) {
+// =====================================================
+// RENDER PORTFOLIO
+// =====================================================
+
+async function renderPortfolio() {
+
+  portfolioGrid.innerHTML = "";
+
+
+  for (
+    let index = 0;
+    index < portfolioItems.length;
+    index++
+  ) {
+
+    const item =
+      portfolioItems[index];
+
+
+    const card =
+      document.createElement(
+        "article"
+      );
+
+    card.className =
+      "portfolio-card";
+
+    card.draggable = true;
+
+    card.dataset.id =
+      item.idid;
+
+
+    // -----------------------------------------------
+    // Drag events
+    // -----------------------------------------------
+
+    card.addEventListener(
+      "dragstart",
+      handleDragStart
+    );
+
+    card.addEventListener(
+      "dragover",
+      handleDragOver
+    );
+
+    card.addEventListener(
+      "drop",
+      handleDrop
+    );
+
+    card.addEventListener(
+      "dragend",
+      handleDragEnd
+    );
+
+
+    // -----------------------------------------------
+    // Signed image URL
+    // -----------------------------------------------
 
     const {
       data: signedData,
@@ -198,10 +236,12 @@ async function loadPortfolio(user) {
         );
 
 
-    if (signedError) {
+    if (
+      signedError
+    ) {
 
       console.error(
-        "Signed URL error:",
+        "Image URL error:",
         signedError
       );
 
@@ -209,14 +249,9 @@ async function loadPortfolio(user) {
     }
 
 
-    const card =
-      document.createElement(
-        "article"
-      );
-
-    card.className =
-      "portfolio-card";
-
+    // -----------------------------------------------
+    // Image
+    // -----------------------------------------------
 
     const image =
       document.createElement(
@@ -227,7 +262,7 @@ async function loadPortfolio(user) {
       signedData.signedUrl;
 
     image.alt =
-      "Portfolio tattoo";
+      `Portfolio image ${index + 1}`;
 
     image.loading =
       "lazy";
@@ -236,6 +271,10 @@ async function loadPortfolio(user) {
       "portfolio-preview";
 
 
+    // -----------------------------------------------
+    // Card content
+    // -----------------------------------------------
+
     const info =
       document.createElement(
         "div"
@@ -243,6 +282,18 @@ async function loadPortfolio(user) {
 
     info.className =
       "portfolio-info";
+
+
+    const order =
+      document.createElement(
+        "div"
+      );
+
+    order.className =
+      "portfolio-order";
+
+    order.textContent =
+      `#${index + 1}`;
 
 
     const status =
@@ -259,9 +310,97 @@ async function loadPortfolio(user) {
         : "Unpublished";
 
 
+    const controls =
+      document.createElement(
+        "div"
+      );
+
+    controls.className =
+      "portfolio-controls";
+
+
+    // -----------------------------------------------
+    // Publish button
+    // -----------------------------------------------
+
+    const publishButton =
+      document.createElement(
+        "button"
+      );
+
+    publishButton.type =
+      "button";
+
+    publishButton.className =
+      "publish-button";
+
+    publishButton.textContent =
+      item.published
+        ? "Unpublish"
+        : "Publish";
+
+
+    publishButton.addEventListener(
+      "click",
+      () =>
+        togglePublished(
+          item,
+          publishButton,
+          status
+        )
+    );
+
+
+    // -----------------------------------------------
+    // Delete button
+    // -----------------------------------------------
+
+    const deleteButton =
+      document.createElement(
+        "button"
+      );
+
+    deleteButton.type =
+      "button";
+
+    deleteButton.className =
+      "delete-button";
+
+    deleteButton.textContent =
+      "Delete";
+
+
+    deleteButton.addEventListener(
+      "click",
+      () =>
+        deletePortfolioItem(
+          item,
+          deleteButton
+        )
+    );
+
+
+    controls.appendChild(
+      publishButton
+    );
+
+    controls.appendChild(
+      deleteButton
+    );
+
+
+    info.appendChild(
+      order
+    );
+
     info.appendChild(
       status
     );
+
+    info.appendChild(
+      controls
+    );
+
 
     card.appendChild(
       image
@@ -271,6 +410,7 @@ async function loadPortfolio(user) {
       info
     );
 
+
     portfolioGrid.appendChild(
       card
     );
@@ -278,55 +418,384 @@ async function loadPortfolio(user) {
 }
 
 
-// =========================
-// UPLOAD
-// =========================
+// =====================================================
+// PUBLISH / UNPUBLISH
+// =====================================================
 
-async function uploadImage(user) {
+async function togglePublished(
+  item,
+  button,
+  status
+) {
 
-  const file =
-    imageInput.files[0];
+  button.disabled = true;
 
 
-  if (!file) {
+  const newValue =
+    !item.published;
 
-    uploadMessage.textContent =
-      "Please select an image first.";
+
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("portfolio")
+      .update({
+        published:
+          newValue
+      })
+      .eq(
+        "idid",
+        item.idid
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .select()
+      .single();
+
+
+  if (error) {
+
+    console.error(
+      "Publish update error:",
+      error
+    );
+
+    alert(
+      "Unable to update publication status."
+    );
+
+    button.disabled = false;
 
     return;
   }
 
 
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-  ];
+  item.published =
+    data.published;
 
 
-  if (
-    !allowedTypes.includes(
-      file.type
-    )
-  ) {
+  status.textContent =
+    item.published
+      ? "Published"
+      : "Unpublished";
 
-    uploadMessage.textContent =
-      "Only JPG, PNG, and WebP images are allowed.";
 
+  button.textContent =
+    item.published
+      ? "Unpublish"
+      : "Publish";
+
+
+  button.disabled = false;
+}
+
+
+// =====================================================
+// DELETE
+// =====================================================
+
+async function deletePortfolioItem(
+  item,
+  button
+) {
+
+  const confirmed =
+    window.confirm(
+      "Delete this portfolio image permanently?"
+    );
+
+
+  if (!confirmed) {
     return;
   }
 
 
-  const maxSize =
-    5 * 1024 * 1024;
+  button.disabled = true;
+
+  button.textContent =
+    "Deleting...";
+
+
+  try {
+
+    // Delete Storage object.
+
+    const {
+      error: storageError
+    } =
+      await supabase.storage
+        .from("portfolio")
+        .remove([
+          item.image_path
+        ]);
+
+
+    if (
+      storageError
+    ) {
+      throw storageError;
+    }
+
+
+    // Delete database record.
+
+    const {
+      error: databaseError
+    } =
+      await supabase
+        .from("portfolio")
+        .delete()
+        .eq(
+          "idid",
+          item.idid
+        )
+        .eq(
+          "owner_id",
+          currentUser.id
+        );
+
+
+    if (
+      databaseError
+    ) {
+      throw databaseError;
+    }
+
+
+    await loadPortfolio();
+
+  } catch (error) {
+
+    console.error(
+      "Delete error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Unable to delete image."
+    );
+
+    button.disabled = false;
+
+    button.textContent =
+      "Delete";
+  }
+}
+
+
+// =====================================================
+// DRAG AND DROP
+// =====================================================
+
+let draggedId = null;
+
+
+function handleDragStart(event) {
+
+  draggedId =
+    event.currentTarget.dataset.id;
+
+  event.currentTarget.classList.add(
+    "dragging"
+  );
+
+  event.dataTransfer.effectAllowed =
+    "move";
+}
+
+
+function handleDragOver(event) {
+
+  event.preventDefault();
+
+  event.dataTransfer.dropEffect =
+    "move";
+}
+
+
+function handleDrop(event) {
+
+  event.preventDefault();
+
+  const targetCard =
+    event.currentTarget;
+
+  const targetId =
+    targetCard.dataset.id;
 
 
   if (
-    file.size > maxSize
+    !draggedId ||
+    draggedId === targetId
+  ) {
+    return;
+  }
+
+
+  const fromIndex =
+    portfolioItems.findIndex(
+      item =>
+        item.idid === draggedId
+    );
+
+
+  const toIndex =
+    portfolioItems.findIndex(
+      item =>
+        item.idid === targetId
+    );
+
+
+  if (
+    fromIndex === -1 ||
+    toIndex === -1
+  ) {
+    return;
+  }
+
+
+  const movedItem =
+    portfolioItems.splice(
+      fromIndex,
+      1
+    )[0];
+
+
+  portfolioItems.splice(
+    toIndex,
+    0,
+    movedItem
+  );
+
+
+  renderPortfolio();
+
+  saveOrder();
+}
+
+
+function handleDragEnd(event) {
+
+  event.currentTarget.classList.remove(
+    "dragging"
+  );
+
+  draggedId = null;
+}
+
+
+// =====================================================
+// SAVE ORDER
+// =====================================================
+
+async function saveOrder() {
+
+  portfolioMessage.textContent =
+    "Saving order...";
+
+
+  try {
+
+    for (
+      let index = 0;
+      index < portfolioItems.length;
+      index++
+    ) {
+
+      const item =
+        portfolioItems[index];
+
+
+      const {
+        error
+      } =
+        await supabase
+          .from("portfolio")
+          .update({
+            display_order:
+              index + 1
+          })
+          .eq(
+            "idid",
+            item.idid
+          )
+          .eq(
+            "owner_id",
+            currentUser.id
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      item.display_order =
+        index + 1;
+    }
+
+
+    portfolioMessage.textContent =
+      "Order saved.";
+
+    setTimeout(
+      () => {
+
+        if (
+          portfolioItems.length > 0
+        ) {
+          portfolioMessage.textContent =
+            "";
+        }
+
+      },
+      1500
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Order save error:",
+      error
+    );
+
+    portfolioMessage.textContent =
+      "Unable to save order.";
+
+    await loadPortfolio();
+  }
+}
+
+
+// =====================================================
+// UPLOAD MULTIPLE IMAGES
+// =====================================================
+
+uploadButton.addEventListener(
+  "click",
+  uploadImages
+);
+
+
+async function uploadImages() {
+
+  const files =
+    Array.from(
+      imageInput.files
+    );
+
+
+  if (
+    files.length === 0
   ) {
 
     uploadMessage.textContent =
-      "Image must be smaller than 5 MB.";
+      "Please select one or more images.";
 
     return;
   }
@@ -337,93 +806,150 @@ async function uploadImage(user) {
   uploadButton.textContent =
     "Uploading...";
 
-  uploadMessage.textContent = "";
+  uploadMessage.textContent =
+    "";
+
+
+  let successful =
+    0;
 
 
   try {
 
-    const extension =
-      file.name
-        .split(".")
-        .pop()
-        ?.toLowerCase() ||
-      "jpg";
+    for (
+      const file of files
+    ) {
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
 
 
-    const fileName =
-      `${crypto.randomUUID()}.${extension}`;
+      if (
+        !allowedTypes.includes(
+          file.type
+        )
+      ) {
 
-
-    const filePath =
-      `${user.id}/${fileName}`;
-
-
-    // Upload to private Storage.
-
-    const {
-      error: storageError
-    } =
-      await supabase.storage
-        .from("portfolio")
-        .upload(
-          filePath,
-          file,
-          {
-            cacheControl: "3600",
-            upsert: false,
-            contentType: file.type
-          }
+        console.warn(
+          "Skipped unsupported file:",
+          file.name
         );
 
-
-    if (storageError) {
-      throw storageError;
-    }
+        continue;
+      }
 
 
-    // Create database record.
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
 
-    const {
-      error: databaseError
-    } =
-      await supabase
-        .from("portfolio")
-        .insert({
+        console.warn(
+          "Skipped file over 5 MB:",
+          file.name
+        );
 
-          owner_id:
-            user.id,
+        continue;
+      }
 
-          image_path:
+
+      const extension =
+        file.name
+          .split(".")
+          .pop()
+          ?.toLowerCase() ||
+        "jpg";
+
+
+      const fileName =
+        `${crypto.randomUUID()}.${extension}`;
+
+
+      const filePath =
+        `${currentUser.id}/${fileName}`;
+
+
+      // Upload file.
+
+      const {
+        error: storageError
+      } =
+        await supabase.storage
+          .from("portfolio")
+          .upload(
             filePath,
+            file,
+            {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: file.type
+            }
+          );
 
-          published:
-            true
-        });
+
+      if (
+        storageError
+      ) {
+        throw storageError;
+      }
 
 
-    // If database insertion fails,
-    // remove the Storage object.
+      // Insert database record.
+      // display_order is automatically
+      // assigned by the database trigger.
 
-    if (databaseError) {
+      const {
+        error: databaseError
+      } =
+        await supabase
+          .from("portfolio")
+          .insert({
+            owner_id:
+              currentUser.id,
 
-      await supabase.storage
-        .from("portfolio")
-        .remove([
-          filePath
-        ]);
+            image_path:
+              filePath,
 
-      throw databaseError;
+            published:
+              true
+          });
+
+
+      if (
+        databaseError
+      ) {
+
+        // Clean up orphaned Storage file.
+
+        await supabase.storage
+          .from("portfolio")
+          .remove([
+            filePath
+          ]);
+
+        throw databaseError;
+      }
+
+
+      successful++;
     }
 
 
     imageInput.value = "";
 
+
     uploadMessage.textContent =
-      "Image uploaded successfully.";
+      `${successful} image${
+        successful === 1
+          ? ""
+          : "s"
+      } uploaded successfully.`;
 
 
-    await loadPortfolio(user);
-
+    await loadPortfolio();
 
   } catch (error) {
 
@@ -441,30 +967,24 @@ async function uploadImage(user) {
     uploadButton.disabled = false;
 
     uploadButton.textContent =
-      "Upload Image";
+      "Upload Images";
   }
 }
 
 
-// =========================
-// START
-// =========================
+// =====================================================
+// INITIALIZE
+// =====================================================
 
-const user =
-  await getAuthenticatedUser();
+currentUser =
+  await requireUser();
 
 
-if (user) {
+if (currentUser) {
 
-  logoutButton.addEventListener(
-    "click",
-    logout
+  await loadPortfolio();
+
+  document.body.classList.remove(
+    "auth-checking"
   );
-
-  uploadButton.addEventListener(
-    "click",
-    () => uploadImage(user)
-  );
-
-  await loadPortfolio(user);
 }
