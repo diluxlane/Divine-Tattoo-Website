@@ -12,9 +12,9 @@ const supabase = createClient(
 );
 
 
-/* =========================
-   ELEMENTS
-========================= */
+// =========================
+// ELEMENTS
+// =========================
 
 const logoutButton =
   document.getElementById("logoutButton");
@@ -35,18 +35,42 @@ const portfolioMessage =
   document.getElementById("portfolioMessage");
 
 
-/* =========================
-   AUTHENTICATION
-========================= */
+// =========================
+// AUTHENTICATION
+// =========================
 
-async function requireAuthentication() {
+async function getAuthenticatedUser() {
+
   const {
     data: { session },
     error
   } = await supabase.auth.getSession();
 
-  if (error || !session) {
+  if (error) {
+    console.error(
+      "Session error:",
+      error
+    );
+
     window.location.replace("./");
+
+    return null;
+  }
+
+  if (!session) {
+    window.location.replace("./");
+
+    return null;
+  }
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    window.location.replace("./");
+
     return null;
   }
 
@@ -54,26 +78,36 @@ async function requireAuthentication() {
     "auth-checking"
   );
 
-  return session;
+  return user;
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
+// =========================
+// LOGOUT
+// =========================
 
 async function logout() {
-  logoutButton.disabled = true;
-  logoutButton.textContent = "Signing Out...";
 
-  const { error } =
-    await supabase.auth.signOut();
+  logoutButton.disabled = true;
+
+  logoutButton.textContent =
+    "Signing Out...";
+
+  const {
+    error
+  } = await supabase.auth.signOut();
 
   if (error) {
-    console.error(error);
+
+    console.error(
+      "Logout error:",
+      error
+    );
 
     logoutButton.disabled = false;
-    logoutButton.textContent = "Sign Out";
+
+    logoutButton.textContent =
+      "Sign Out";
 
     return;
   }
@@ -82,15 +116,21 @@ async function logout() {
 }
 
 
-/* =========================
-   LOAD PORTFOLIO
-========================= */
+// =========================
+// LOAD PORTFOLIO
+// =========================
 
-async function loadPortfolio() {
+async function loadPortfolio(user) {
+
   portfolioMessage.textContent =
     "Loading portfolio...";
 
   portfolioGrid.innerHTML = "";
+
+
+  // IMPORTANT:
+  // Only request records belonging
+  // to the authenticated user.
 
   const {
     data,
@@ -100,6 +140,10 @@ async function loadPortfolio() {
     .select(
       "idid, image_path, published, created_at"
     )
+    .eq(
+      "owner_id",
+      user.id
+    )
     .order(
       "created_at",
       {
@@ -107,9 +151,11 @@ async function loadPortfolio() {
       }
     );
 
+
   if (error) {
+
     console.error(
-      "Portfolio error:",
+      "Portfolio load error:",
       error
     );
 
@@ -119,27 +165,26 @@ async function loadPortfolio() {
     return;
   }
 
-  if (!data || data.length === 0) {
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
     portfolioMessage.textContent =
       "No portfolio images yet.";
 
     return;
   }
 
+
   portfolioMessage.textContent = "";
 
+
+  // Create a temporary signed URL
+  // for each private Storage object.
+
   for (const item of data) {
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "portfolio-card";
-
-
-    /* =========================
-       CREATE SIGNED URL
-    ========================= */
 
     const {
       data: signedData,
@@ -152,7 +197,9 @@ async function loadPortfolio() {
           3600
         );
 
+
     if (signedError) {
+
       console.error(
         "Signed URL error:",
         signedError
@@ -162,12 +209,19 @@ async function loadPortfolio() {
     }
 
 
-    /* =========================
-       IMAGE
-    ========================= */
+    const card =
+      document.createElement(
+        "article"
+      );
+
+    card.className =
+      "portfolio-card";
+
 
     const image =
-      document.createElement("img");
+      document.createElement(
+        "img"
+      );
 
     image.src =
       signedData.signedUrl;
@@ -182,19 +236,19 @@ async function loadPortfolio() {
       "portfolio-preview";
 
 
-    /* =========================
-       INFO
-    ========================= */
-
     const info =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     info.className =
       "portfolio-info";
 
 
     const status =
-      document.createElement("span");
+      document.createElement(
+        "span"
+      );
 
     status.className =
       "portfolio-status";
@@ -205,34 +259,43 @@ async function loadPortfolio() {
         : "Unpublished";
 
 
-    info.appendChild(status);
+    info.appendChild(
+      status
+    );
 
+    card.appendChild(
+      image
+    );
 
-    card.appendChild(image);
+    card.appendChild(
+      info
+    );
 
-    card.appendChild(info);
-
-
-    portfolioGrid.appendChild(card);
+    portfolioGrid.appendChild(
+      card
+    );
   }
 }
 
 
-/* =========================
-   UPLOAD
-========================= */
+// =========================
+// UPLOAD
+// =========================
 
-async function uploadImage() {
+async function uploadImage(user) {
 
   const file =
     imageInput.files[0];
 
+
   if (!file) {
+
     uploadMessage.textContent =
       "Please select an image first.";
 
     return;
   }
+
 
   const allowedTypes = [
     "image/jpeg",
@@ -240,61 +303,62 @@ async function uploadImage() {
     "image/webp"
   ];
 
-  if (!allowedTypes.includes(file.type)) {
+
+  if (
+    !allowedTypes.includes(
+      file.type
+    )
+  ) {
+
     uploadMessage.textContent =
       "Only JPG, PNG, and WebP images are allowed.";
 
     return;
   }
 
+
   const maxSize =
     5 * 1024 * 1024;
 
-  if (file.size > maxSize) {
+
+  if (
+    file.size > maxSize
+  ) {
+
     uploadMessage.textContent =
       "Image must be smaller than 5 MB.";
 
     return;
   }
 
+
   uploadButton.disabled = true;
+
   uploadButton.textContent =
     "Uploading...";
 
   uploadMessage.textContent = "";
 
+
   try {
-
-    const {
-      data: {
-        user
-      },
-      error: userError
-    } =
-      await supabase.auth.getUser();
-
-    if (userError || !user) {
-      throw new Error(
-        "Authentication session expired."
-      );
-    }
 
     const extension =
       file.name
         .split(".")
         .pop()
-        ?.toLowerCase() || "jpg";
+        ?.toLowerCase() ||
+      "jpg";
+
 
     const fileName =
       `${crypto.randomUUID()}.${extension}`;
+
 
     const filePath =
       `${user.id}/${fileName}`;
 
 
-    /* =========================
-       STORAGE UPLOAD
-    ========================= */
+    // Upload to private Storage.
 
     const {
       error: storageError
@@ -311,14 +375,13 @@ async function uploadImage() {
           }
         );
 
+
     if (storageError) {
       throw storageError;
     }
 
 
-    /* =========================
-       DATABASE RECORD
-    ========================= */
+    // Create database record.
 
     const {
       error: databaseError
@@ -326,10 +389,20 @@ async function uploadImage() {
       await supabase
         .from("portfolio")
         .insert({
-          owner_id: user.id,
-          image_path: filePath,
-          published: true
+
+          owner_id:
+            user.id,
+
+          image_path:
+            filePath,
+
+          published:
+            true
         });
+
+
+    // If database insertion fails,
+    // remove the Storage object.
 
     if (databaseError) {
 
@@ -348,7 +421,9 @@ async function uploadImage() {
     uploadMessage.textContent =
       "Image uploaded successfully.";
 
-    await loadPortfolio();
+
+    await loadPortfolio(user);
+
 
   } catch (error) {
 
@@ -371,28 +446,25 @@ async function uploadImage() {
 }
 
 
-/* =========================
-   EVENTS
-========================= */
+// =========================
+// START
+// =========================
 
-logoutButton.addEventListener(
-  "click",
-  logout
-);
-
-uploadButton.addEventListener(
-  "click",
-  uploadImage
-);
+const user =
+  await getAuthenticatedUser();
 
 
-/* =========================
-   START
-========================= */
+if (user) {
 
-const session =
-  await requireAuthentication();
+  logoutButton.addEventListener(
+    "click",
+    logout
+  );
 
-if (session) {
-  await loadPortfolio();
+  uploadButton.addEventListener(
+    "click",
+    () => uploadImage(user)
+  );
+
+  await loadPortfolio(user);
 }
