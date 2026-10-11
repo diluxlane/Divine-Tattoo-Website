@@ -1,21 +1,9 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { supabase, canManagePortfolio } from "../supabase-config.js";
 
 /* ==========================================================
    DIVINE TATTOO — ADMIN LOGIN
    Supabase authentication
    ========================================================== */
-
-const SUPABASE_URL =
-  "https://igjsnwpcyjgjjhpmpkvi.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_NJdvsjVqLBXDkRyJhKp-WA_-M-w0UEX";
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
-
 
 /* ==========================================================
    ELEMENTS
@@ -92,7 +80,7 @@ async function checkExistingSession() {
   }
 
 
-  if (session) {
+  if (session && await canManagePortfolio()) {
 
     window.location.replace(
       "./dashboard.html"
@@ -176,6 +164,11 @@ loginForm.addEventListener(
       }
 
 
+      if (data.session && !await canManagePortfolio()) {
+        showMessage("This account does not have access to Divine Tattoo.");
+        return;
+      }
+
       if (!data.session) {
 
         showMessage(
@@ -218,3 +211,6 @@ loginForm.addEventListener(
    ========================================================== */
 
 checkExistingSession();
+if (new URLSearchParams(window.location.search).get("access") === "denied") {
+  showMessage("This account does not have access to Divine Tattoo.");
+}

@@ -185,7 +185,7 @@
      2. Only display published records.
      3. Respect display_order.
      4. Use public Storage URLs.
-     5. If Supabase fails or has no published images,
+     5. If Supabase fails,
         use the existing numbered GitHub portfolio.
      
      NOTHING ELSE ON THE WEBSITE IS CHANGED.
@@ -294,6 +294,10 @@
     function renderPortfolioImages(items){
 
       if(!items || items.length === 0){
+        grid.innerHTML = '';
+        var emptyMoreWrap = document.getElementById('portfolioMoreWrap');
+        if(emptyMoreWrap) emptyMoreWrap.style.display = 'none';
+        if(viewAllBtn) viewAllBtn.style.display = 'none';
         return;
       }
 
@@ -411,37 +415,16 @@
 
       try{
 
-        var supabaseModule =
-          await import(
-            'https://esm.sh/@supabase/supabase-js@2'
-          );
-
-
-        var createClient =
-          supabaseModule.createClient;
-
-
-        var SUPABASE_URL =
-          'https://igjsnwpcyjgjjhpmpkvi.supabase.co';
-
-
-        var SUPABASE_PUBLISHABLE_KEY =
-          'sb_publishable_NJdvsjVqLBXDkRyJhKp-WA_-M-w0UEX';
-
-
-        var supabase =
-          createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-          );
-
+        var platform = await import('./supabase-config.js');
+        var supabase = platform.supabase;
 
         var result =
           await supabase
-            .from('portfolio')
+            .from('portfolio_items')
             .select(
-              'idid, image_path, published, display_order'
+              'id, image_url, published, display_order'
             )
+            .eq('client_id', platform.CLIENT_ID)
             .eq(
               'published',
               true
@@ -470,13 +453,13 @@
 
 
         /*
-         * If there are no published Supabase
-         * images yet, use the old GitHub
-         * portfolio instead.
+         * An intentionally empty live gallery must remain empty.
+         * The static fallback is only for backend/network failures.
          */
 
         if(data.length === 0){
-          return false;
+          renderPortfolioImages([]);
+          return true;
         }
 
 
@@ -484,26 +467,20 @@
           data
             .filter(function(item){
               return (
-                item.image_path &&
+                item.image_url &&
                 item.published === true
               );
             })
             .map(function(item){
 
-              var publicUrl =
-                supabase.storage
-                  .from('portfolio')
-                  .getPublicUrl(
-                    item.image_path
-                  );
-
+              platform.portfolioPath(item.image_url);
 
               return {
                 id:
-                  item.idid,
+                  item.id,
 
                 url:
-                  publicUrl.data.publicUrl,
+                  item.image_url,
 
                 display_order:
                   item.display_order
@@ -513,7 +490,8 @@
 
 
         if(items.length === 0){
-          return false;
+          renderPortfolioImages([]);
+          return true;
         }
 
 
@@ -550,8 +528,7 @@
         /*
          * If Supabase worked, stop here.
          *
-         * If Supabase failed or has no published
-         * records, safely use the existing GitHub
+         * If Supabase failed, use the existing GitHub
          * numbered portfolio.
          */
 
