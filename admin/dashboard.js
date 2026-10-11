@@ -1,15 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const SUPABASE_URL =
-  "https://igjsnwpcyjgjjhpmpkvi.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_NJdvsjVqLBXDkRyJhKp-WA_-M-w0UEX";
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+import { supabase, CLIENT_ID, PORTFOLIO_BUCKET, canManagePortfolio, portfolioPath } from "../supabase-config.js";
 
 const portfolioGrid =
   document.getElementById("portfolioGrid");
@@ -69,6 +58,10 @@ async function requireUser() {
     return null;
   }
 
+  if (!await canManagePortfolio()) {
+    window.location.replace("./?access=denied");
+    return null;
+  }
   return user;
 }
 
@@ -105,13 +98,13 @@ async function loadPortfolio() {
     error
   } =
     await supabase
-      .from("portfolio")
+      .from("portfolio_items")
       .select(
-        "idid, owner_id, image_path, published, display_order, created_at"
+        "idid:id, client_id, image_url, published, display_order, created_at"
       )
       .eq(
-        "owner_id",
-        currentUser.id
+        "client_id",
+        CLIENT_ID
       )
       .order(
         "display_order",
@@ -198,33 +191,11 @@ async function renderPortfolio() {
 
 
     // -----------------------------------------------
-    // Signed image URL
-    // -----------------------------------------------
-
-    const {
-      data: signedData,
-      error: signedError
-    } =
-      await supabase.storage
-        .from("portfolio")
-        .createSignedUrl(
-          item.image_path,
-          3600
-        );
-
-
-    if (
-      signedError
-    ) {
-
-      console.error(
-        "Image URL error:",
-        signedError
-      );
-
+    // Validate the tenant path before displaying the central public image.
+    try { portfolioPath(item.image_url); } catch (error) {
+      console.error("Image URL error:", error);
       continue;
     }
-
 
     // -----------------------------------------------
     // Image
@@ -236,7 +207,7 @@ async function renderPortfolio() {
       );
 
     image.src =
-      signedData.signedUrl;
+      item.image_url;
 
     image.alt =
       `Portfolio image ${position}`;
@@ -750,8 +721,9 @@ async function movePortfolioItemToPosition(
       error
     } =
       await supabase.rpc(
-        "move_portfolio_item_to_position",
+        "move_client_portfolio_item_to_position",
         {
+          p_client_id: CLIENT_ID,
           p_item_id:
             item.idid,
 
@@ -896,18 +868,18 @@ async function togglePublished(
     error
   } =
     await supabase
-      .from("portfolio")
+      .from("portfolio_items")
       .update({
         published:
           newValue
       })
       .eq(
-        "idid",
+        "id",
         item.idid
       )
       .eq(
-        "owner_id",
-        currentUser.id
+        "client_id",
+        CLIENT_ID
       )
       .select()
       .single();
@@ -978,41 +950,26 @@ async function deletePortfolioItem(
 
   try {
 
-    // Delete Storage object.
-
-    const {
-      error: storageError
-    } =
-      await supabase.storage
-        .from("portfolio")
-        .remove([
-          item.image_path
-        ]);
-
-
-    if (
-      storageError
-    ) {
-      throw storageError;
-    }
-
-
-    // Delete database record.
+    const filePath = portfolioPath(item.image_url);
+    // Confirm deletion of our tenant's record before removing its file.
+    // A denied database write must never leave a visible row with a missing image.
 
     const {
       error: databaseError
     } =
       await supabase
-        .from("portfolio")
+        .from("portfolio_items")
         .delete()
         .eq(
-          "idid",
+          "id",
           item.idid
         )
         .eq(
-          "owner_id",
-          currentUser.id
-        );
+          "client_id",
+          CLIENT_ID
+        )
+        .select("id")
+        .single();
 
 
     if (
@@ -1021,6 +978,13 @@ async function deletePortfolioItem(
       throw databaseError;
     }
 
+    const { error: storageError } = await supabase.storage
+      .from(PORTFOLIO_BUCKET)
+      .remove([filePath]);
+    if (storageError) {
+      console.error("Storage cleanup failed:", storageError);
+      alert("The image was removed from the gallery, but file cleanup failed. Please contact Zyberlane.");
+    }
 
     await loadPortfolio();
 
@@ -1141,7 +1105,7 @@ async function uploadImages() {
 
 
       const filePath =
-        `${currentUser.id}/${fileName}`;
+        `${CLIENT_ID}/${fileName}`;
 
 
       // Upload file.
@@ -1150,7 +1114,7 @@ async function uploadImages() {
         error: storageError
       } =
         await supabase.storage
-          .from("portfolio")
+          .from(PORTFOLIO_BUCKET)
           .upload(
             filePath,
             file,
@@ -1177,13 +1141,12 @@ async function uploadImages() {
         error: databaseError
       } =
         await supabase
-          .from("portfolio")
+          .from("portfolio_items")
           .insert({
-            owner_id:
-              currentUser.id,
-
-            image_path:
-              filePath,
+            client_id: CLIENT_ID,
+            created_by: currentUser.id,
+            image_url: supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(filePath).data.publicUrl,
+            source: "central",
 
             published:
               true
@@ -1197,7 +1160,7 @@ async function uploadImages() {
         // Clean up orphaned Storage file.
 
         await supabase.storage
-          .from("portfolio")
+          .from(PORTFOLIO_BUCKET)
           .remove([
             filePath
           ]);
