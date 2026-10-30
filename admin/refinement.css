@@ -1,0 +1,172 @@
+/* ==========================================================
+   DIVINE TATTOO — ADMIN UI SURFACE REFINEMENT
+   Keeps the approved content, palette, typography and CMS
+   behavior unchanged. This file only refines presentation.
+   ========================================================== */
+
+:root {
+  --ui-card-radius: 18px;
+  --ui-control-radius: 12px;
+  --ui-small-radius: 10px;
+}
+
+/* Remove decorative corner brackets from admin surfaces. */
+.frame-corner {
+  display: none !important;
+}
+
+/* ==========================================================
+   LOGIN — FLAT PAGE, NO CARD-INSIDE-CARD SURFACE
+   ========================================================== */
+
+.login-page {
+  width: min(100%, 1180px);
+  padding: 24px 22px 42px;
+}
+
+.login-panel {
+  width: min(100%, 640px);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.login-brand {
+  padding: 24px 0 26px;
+}
+
+/* Keep the animated Greek-key chain, but let it read as a
+   page-wide separator instead of an edge of a card. */
+.admin-login-body .login-panel > .gk-divider {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+.login-intro {
+  padding: 38px 0 0;
+}
+
+#loginForm {
+  padding: 28px 0 0;
+}
+
+.login-footer {
+  padding: 32px 0 0;
+}
+
+/* ==========================================================
+   DASHBOARD — FLAT UPLOAD AREA, CARD ONLY WHERE USEFUL
+   ========================================================== */
+
+.upload-section {
+  padding-left: 0;
+  padding-right: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.portfolio-section {
+  border-radius: var(--ui-card-radius);
+  background: rgba(10, 9, 8, 0.72);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
+}
+
+/* ==========================================================
+   ROUNDED UI SYSTEM
+   Large cards are gently rounded; smaller controls are
+   proportionally rounder for a softer, more polished feel.
+   ========================================================== */
+
+.field input,
+#imageInput {
+  border-radius: var(--ui-control-radius);
+}
+
+.primary-button,
+#loginButton,
+.logout-button {
+  border-radius: var(--ui-control-radius);
+}
+
+#imageInput::file-selector-button,
+.portfolio-order,
+.portfolio-order-input,
+.portfolio-controls button {
+  border-radius: var(--ui-small-radius);
+}
+
+.portfolio-card {
+  border-radius: var(--ui-card-radius);
+}
+
+.portfolio-card::before {
+  border-radius: inherit;
+}
+
+/* The image follows the parent card's rounded top edge. */
+.portfolio-preview {
+  border-radius: var(--ui-card-radius) var(--ui-card-radius) 0 0;
+}
+
+/* Preserve clean rounded edges when controls or images touch
+   the card boundary. */
+.portfolio-card {
+  overflow: hidden;
+}
+
+/* Slightly soften the upload field and button as a pair now
+   that they sit directly on the page rather than inside a card. */
+#imageInput {
+  background: rgba(10, 9, 8, 0.54);
+}
+
+.upload-controls .primary-button {
+  border-radius: 13px;
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 520px) {
+  .login-page {
+    padding: 18px 18px 36px;
+  }
+
+  .login-brand {
+    padding: 22px 0 22px;
+  }
+
+  .login-intro {
+    padding: 32px 0 0;
+  }
+
+  #loginForm {
+    padding: 24px 0 0;
+  }
+
+  .login-footer {
+    padding: 28px 0 0;
+  }
+
+  .upload-section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .portfolio-section {
+    border-radius: 16px;
+  }
+
+  .portfolio-card {
+    border-radius: 14px;
+  }
+
+  .portfolio-preview {
+    border-radius: 14px 14px 0 0;
+  }
+}
