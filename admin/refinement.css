@@ -21,25 +21,32 @@
 
 .login-page {
   width: min(1180px, calc(100% - 32px));
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
-  padding: 24px 0 42px;
+  padding: 16px 0;
   display: block;
 }
 
 .login-panel {
   width: 100%;
   max-width: none;
+  min-height: calc(100vh - 32px);
+  min-height: calc(100dvh - 32px);
   overflow: visible;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+  display: grid;
+  grid-template-rows: auto auto auto auto auto;
+  align-content: space-between;
 }
 
 /* Match the dashboard's top brand geometry. */
 .login-brand {
   width: 100%;
-  padding: 10px 0 22px;
+  padding: 8px 0 12px;
 }
 
 /* Keep the form centered while the brand header uses the
@@ -65,20 +72,32 @@
 }
 
 .login-intro {
-  padding: 38px 0 0;
+  padding: 16px 0 0;
 }
 
 #loginForm {
-  padding: 28px 0 0;
+  padding: 14px 0 0;
 }
 
 .login-footer {
-  padding: 32px 0 0;
+  padding: 16px 0 4px;
 }
 
 /* ==========================================================
    DASHBOARD — FLAT UPLOAD AREA, CARD ONLY WHERE USEFUL
    ========================================================== */
+
+/* The dashboard uses the same true edge-to-edge Greek-key
+   divider as the login page. */
+.admin-dashboard-body .admin-shell > .gk-divider {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  transform: translateX(-50%);
+}
 
 .upload-section {
   padding-left: 0;
@@ -155,23 +174,30 @@
 @media (max-width: 520px) {
   .login-page {
     width: min(100% - 24px, 1180px);
-    padding: 18px 0 36px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 12px 0 14px;
+  }
+
+  .login-panel {
+    min-height: calc(100vh - 26px);
+    min-height: calc(100dvh - 26px);
   }
 
   .login-brand {
-    padding: 10px 0 22px;
+    padding: 6px 0 10px;
   }
 
   .login-intro {
-    padding: 32px 0 0;
+    padding: 14px 0 0;
   }
 
   #loginForm {
-    padding: 24px 0 0;
+    padding: 12px 0 0;
   }
 
   .login-footer {
-    padding: 28px 0 0;
+    padding: 14px 0 2px;
   }
 
   .upload-section {
