@@ -16,37 +16,30 @@
 }
 
 /* ==========================================================
-   LOGIN — FLAT PAGE, NO CARD-INSIDE-CARD SURFACE
+   LOGIN — RESTORED STABLE PREVIOUS LAYOUT
    ========================================================== */
 
 .login-page {
   width: min(1180px, calc(100% - 32px));
-  min-height: 100vh;
-  min-height: 100dvh;
   margin: 0 auto;
-  padding: 16px 0;
+  padding: 24px 0 42px;
   display: block;
 }
 
 .login-panel {
   width: 100%;
   max-width: none;
-  min-height: calc(100vh - 32px);
-  min-height: calc(100dvh - 32px);
   overflow: visible;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  display: grid;
-  grid-template-rows: auto auto auto auto auto;
-  align-content: space-between;
 }
 
 /* Match the dashboard's top brand geometry. */
 .login-brand {
   width: 100%;
-  padding: 8px 0 12px;
+  padding: 10px 0 22px;
 }
 
 /* Keep the form centered while the brand header uses the
@@ -59,8 +52,7 @@
   margin-right: auto;
 }
 
-/* Keep the animated Greek-key chain and force it to the true
-   physical viewport edges, independent of container width. */
+/* Keep the animated Greek-key chain flush with the viewport. */
 .admin-login-body .login-panel > .gk-divider {
   position: relative;
   left: 50%;
@@ -72,23 +64,21 @@
 }
 
 .login-intro {
-  padding: 16px 0 0;
+  padding: 38px 0 0;
 }
 
 #loginForm {
-  padding: 14px 0 0;
+  padding: 28px 0 0;
 }
 
 .login-footer {
-  padding: 16px 0 4px;
+  padding: 32px 0 0;
 }
 
 /* ==========================================================
-   DASHBOARD — FLAT UPLOAD AREA, CARD ONLY WHERE USEFUL
+   DASHBOARD — FULL-WIDTH DIVIDER + TIGHTER SAFE SPACING
    ========================================================== */
 
-/* The dashboard uses the same true edge-to-edge Greek-key
-   divider as the login page. */
 .admin-dashboard-body .admin-shell > .gk-divider {
   position: relative;
   left: 50%;
@@ -97,6 +87,29 @@
   margin-left: 0;
   margin-right: 0;
   transform: translateX(-50%);
+}
+
+/* Reduce unused vertical black space without changing the
+   dashboard structure or control geometry. */
+.admin-dashboard-body .admin-shell {
+  padding-top: 18px;
+  padding-bottom: 48px;
+}
+
+.admin-dashboard-body .admin-header {
+  padding: 8px 0 16px;
+}
+
+.admin-dashboard-body .admin-hero {
+  padding: clamp(28px, 5vw, 48px) 0 8px;
+}
+
+.admin-dashboard-body .admin-panel {
+  margin-top: 20px;
+}
+
+.admin-dashboard-body .section-heading {
+  margin-bottom: 18px;
 }
 
 .upload-section {
@@ -174,30 +187,44 @@
 @media (max-width: 520px) {
   .login-page {
     width: min(100% - 24px, 1180px);
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 12px 0 14px;
-  }
-
-  .login-panel {
-    min-height: calc(100vh - 26px);
-    min-height: calc(100dvh - 26px);
+    padding: 18px 0 36px;
   }
 
   .login-brand {
-    padding: 6px 0 10px;
+    padding: 10px 0 22px;
   }
 
   .login-intro {
-    padding: 14px 0 0;
+    padding: 32px 0 0;
   }
 
   #loginForm {
-    padding: 12px 0 0;
+    padding: 24px 0 0;
   }
 
   .login-footer {
-    padding: 14px 0 2px;
+    padding: 28px 0 0;
+  }
+
+  .admin-dashboard-body .admin-shell {
+    padding-top: 14px;
+    padding-bottom: 38px;
+  }
+
+  .admin-dashboard-body .admin-header {
+    padding: 8px 0 14px;
+  }
+
+  .admin-dashboard-body .admin-hero {
+    padding: 24px 0 6px;
+  }
+
+  .admin-dashboard-body .admin-panel {
+    margin-top: 16px;
+  }
+
+  .admin-dashboard-body .section-heading {
+    margin-bottom: 16px;
   }
 
   .upload-section {
