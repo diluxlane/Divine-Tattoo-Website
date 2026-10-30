@@ -20,12 +20,15 @@
    ========================================================== */
 
 .login-page {
-  width: min(100%, 1180px);
-  padding: 24px 22px 42px;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 42px;
+  display: block;
 }
 
 .login-panel {
-  width: min(100%, 640px);
+  width: 100%;
+  max-width: none;
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -33,15 +36,32 @@
   box-shadow: none;
 }
 
+/* Match the dashboard's top brand geometry. */
 .login-brand {
-  padding: 24px 0 26px;
+  width: 100%;
+  padding: 10px 0 22px;
 }
 
-/* Keep the animated Greek-key chain, but let it read as a
-   page-wide separator instead of an edge of a card. */
+/* Keep the form centered while the brand header uses the
+   full page container width. */
+.login-intro,
+#loginForm,
+.login-footer {
+  width: min(100%, 640px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Keep the animated Greek-key chain and force it to the true
+   physical viewport edges, independent of container width. */
 .admin-login-body .login-panel > .gk-divider {
+  position: relative;
+  left: 50%;
   width: 100vw;
-  margin-left: calc(50% - 50vw);
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+  transform: translateX(-50%);
 }
 
 .login-intro {
@@ -134,11 +154,12 @@
 
 @media (max-width: 520px) {
   .login-page {
-    padding: 18px 18px 36px;
+    width: min(100% - 24px, 1180px);
+    padding: 18px 0 36px;
   }
 
   .login-brand {
-    padding: 22px 0 22px;
+    padding: 10px 0 22px;
   }
 
   .login-intro {
