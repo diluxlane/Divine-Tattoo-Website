@@ -264,12 +264,15 @@
 }
 
 .admin-dashboard-body .portfolio-section {
-  margin-top: 8px;
+  margin-top: 14px;
 }
 
 @media (max-width: 520px) {
-  .admin-dashboard-body .upload-section,
-  .admin-dashboard-body .portfolio-section {
+  .admin-dashboard-body .upload-section {
     margin-top: 6px;
+  }
+
+  .admin-dashboard-body .portfolio-section {
+    margin-top: 14px;
   }
 }
