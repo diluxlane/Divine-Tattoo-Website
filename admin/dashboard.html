@@ -2,145 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Portfolio CMS | Divine Tattoo</title>
-
-  <link
-    rel="stylesheet"
-    href="./admin.css"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0908">
+  <title>Portfolio Manager | Divine Tattoo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./admin.css">
 </head>
-
-<body class="auth-checking">
-
+<body class="auth-checking admin-dashboard-body">
   <main class="admin-shell">
-
-    <!-- HEADER -->
-
     <header class="admin-header">
-
-      <div>
-        <p class="admin-eyebrow">
-          DIVINE TATTOO
-        </p>
-
-        <h1>
-          Portfolio
-        </h1>
-
-        <p class="admin-subtitle">
-          Manage the images displayed on your website.
-        </p>
+      <div class="admin-brand">
+        <img src="../assets/logo-480.jpg" alt="Divine Tattoo crest" class="admin-brand-mark">
+        <div class="admin-brand-copy">
+          <span class="admin-brand-name">Divine<em>Tattoo</em></span>
+          <span class="admin-brand-kicker">Private Studio CMS</span>
+        </div>
       </div>
 
-      <button
-        id="logoutButton"
-        type="button"
-        class="logout-button"
-      >
-        Sign Out
-      </button>
-
+      <button id="logoutButton" type="button" class="logout-button">Sign Out</button>
     </header>
 
+    <div class="gk-divider" aria-hidden="true"></div>
 
-    <!-- UPLOAD -->
+    <section class="admin-hero" aria-labelledby="dashboardTitle">
+      <p class="eyebrow"><span class="star">✦</span> Studio CMS <span class="star">✦</span></p>
+      <h1 id="dashboardTitle">Portfolio Manager</h1>
+      <p class="admin-subtitle">Manage the images shown in the Divine Tattoo website portfolio without changing the public site layout.</p>
+    </section>
 
-    <section class="upload-section">
+    <section class="admin-panel upload-section">
+      <span class="frame-corner corner-tl" aria-hidden="true"></span>
+      <span class="frame-corner corner-tr" aria-hidden="true"></span>
+      <span class="frame-corner corner-bl" aria-hidden="true"></span>
+      <span class="frame-corner corner-br" aria-hidden="true"></span>
 
       <div class="section-heading">
-
         <div>
-          <h2>
-            Add Portfolio Images
-          </h2>
-
-          <p>
-            Upload JPG, PNG, or WebP images.
-          </p>
+          <p class="section-kicker">Upload</p>
+          <h2>Add Portfolio Images</h2>
+          <p>Add new JPG, PNG, or WebP images to the studio portfolio.</p>
         </div>
-
       </div>
-
 
       <div class="upload-controls">
-
-        <input
-          id="imageInput"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-        >
-
-        <button
-          id="uploadButton"
-          type="button"
-          class="primary-button"
-        >
-          Upload Images
-        </button>
-
+        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        <button id="uploadButton" type="button" class="primary-button">Upload Images</button>
       </div>
 
-
-      <p
-        id="uploadMessage"
-        class="message"
-        aria-live="polite"
-      ></p>
-
+      <p id="uploadMessage" class="message" aria-live="polite"></p>
     </section>
 
-
-    <!-- PORTFOLIO -->
-
-    <section class="portfolio-section">
+    <section class="admin-panel portfolio-section">
+      <span class="frame-corner corner-tl" aria-hidden="true"></span>
+      <span class="frame-corner corner-tr" aria-hidden="true"></span>
+      <span class="frame-corner corner-bl" aria-hidden="true"></span>
+      <span class="frame-corner corner-br" aria-hidden="true"></span>
 
       <div class="section-heading">
-
         <div>
-          <h2>
-            Your Portfolio
-          </h2>
-
-          <p>
-            Drag images to change their order.
-          </p>
+          <p class="section-kicker">Website Portfolio</p>
+          <h2>Portfolio Library</h2>
+          <p>Tap an image number to change its position. Publish, unpublish, or delete images using the controls below each card.</p>
         </div>
-
       </div>
 
-
-      <p
-        id="portfolioMessage"
-        class="message"
-        aria-live="polite"
-      >
-        Loading portfolio...
-      </p>
-
-
-      <div
-        id="portfolioGrid"
-        class="portfolio-grid"
-      ></div>
-
+      <p id="portfolioMessage" class="message" aria-live="polite">Loading portfolio...</p>
+      <div id="portfolioGrid" class="portfolio-grid"></div>
     </section>
-
   </main>
 
-
-  <!-- Supabase / CMS JavaScript -->
-
-  <script
-    type="module"
-    src="./dashboard.js"
-  ></script>
-
+  <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
