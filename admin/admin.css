@@ -1,843 +1,573 @@
 /* ==========================================================
-   DIVINE TATTOO — ADMIN CMS
-   Premium login + mobile-first portfolio management
-   ========================================================== */
-
-
-/* ==========================================================
-   ROOT
+   DIVINE TATTOO — PRIVATE STUDIO CMS
+   Visual system mirrors the public Divine Tattoo website.
+   Front-end only: authentication/CMS behavior remains in JS.
    ========================================================== */
 
 :root {
-  --bg: #080808;
-  --surface: #111111;
-  --surface-2: #171717;
-  --surface-3: #202020;
-
-  --text: #f5f5f5;
-  --muted: #a7a7a7;
-
-  --border: rgba(255, 255, 255, 0.10);
-
-  --gold: #d4af37;
-  --gold-soft: rgba(212, 175, 55, 0.14);
-
-  --danger: #e56b6f;
-  --success: #75c98a;
-
-  --radius: 14px;
-  --shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
+  --black: #0a0908;
+  --black-soft: #141210;
+  --surface: #1c1916;
+  --surface-2: #221e19;
+  --gold-deep: #7a5c10;
+  --gold: #c9a227;
+  --gold-light: #e8c766;
+  --gold-pale: #f0d98c;
+  --marble: #ede9df;
+  --white: #f7f4ee;
+  --stone: #a39c8a;
+  --stone-dim: #756e5e;
+  --line: rgba(201, 162, 39, 0.28);
+  --danger: #df7b7d;
+  --success: #8fbf91;
+  --font-display: 'Cinzel', 'Times New Roman', serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --radius: 2px;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
 }
 
-
-/* ==========================================================
-   RESET
-   ========================================================== */
-
-* {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
   min-height: 100%;
-  background: var(--bg);
+  background: var(--black);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(212, 175, 55, 0.07),
-      transparent 35%
-    ),
-    var(--bg);
-
-  color: var(--text);
-
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  line-height: 1.5;
+  color: var(--marble);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  background: var(--black);
+  overflow-x: clip;
 }
 
-button,
-input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-
-/* ==========================================================
-   PREMIUM LOGIN PAGE
-   ========================================================== */
-
-.login-page {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-
-  padding: 24px;
-
-  overflow: hidden;
-}
-
-
-/* ==========================================================
-   LOGIN BACKGROUND
-   ========================================================== */
-
-.login-background {
+body::before,
+body::after {
+  content: '';
   position: fixed;
   inset: 0;
-
-  overflow: hidden;
-
   pointer-events: none;
 }
 
-.background-orb {
-  position: absolute;
+body::before {
+  z-index: -2;
+  background-image: url('../assets/pattern-duotone.jpg');
+  background-repeat: repeat;
+  background-size: 420px auto;
+  opacity: 0.15;
+}
 
-  width: 420px;
-  height: 420px;
-
-  border-radius: 50%;
-
+body::after {
+  z-index: -1;
   background:
-    radial-gradient(
-      circle,
-      rgba(212, 175, 55, 0.10),
-      transparent 68%
-    );
-
-  filter: blur(20px);
+    radial-gradient(circle at 14% 8%, rgba(201, 162, 39, 0.10), transparent 30%),
+    radial-gradient(circle at 86% 88%, rgba(201, 162, 39, 0.06), transparent 34%),
+    rgba(10, 9, 8, 0.87);
 }
 
-.background-orb-one {
-  top: -220px;
-  left: -180px;
+button,
+input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+h1, h2, h3, p { margin-top: 0; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--white);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.12;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
 }
 
-.background-orb-two {
-  right: -220px;
-  bottom: -240px;
+p { color: var(--stone); }
 
-  opacity: 0.55;
-}
-
-
-/* ==========================================================
-   LOGIN CARD
-   ========================================================== */
-
-.login-card {
-  position: relative;
-  z-index: 1;
-
-  width: min(100%, 460px);
-
-  padding: 34px 26px 24px;
-
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 18px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.018)
-    ),
-    rgba(10, 10, 10, 0.94);
-
-  box-shadow:
-    0 30px 90px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-
-/* ==========================================================
-   BRAND
-   ========================================================== */
-
-.brand-area {
-  text-align: center;
-}
-
-.brand {
-  display: inline-flex;
-  flex-direction: column;
+/* ---------- shared brand ---------- */
+.admin-brand,
+.login-brand {
+  display: flex;
   align-items: center;
-
-  line-height: 0.85;
+  gap: 14px;
 }
 
-.brand h1 {
-  margin: 0;
-
-  color: var(--text);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2.6rem, 12vw, 4rem);
-  font-weight: 400;
-
-  letter-spacing: -0.04em;
+.admin-brand-mark {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--line), 0 8px 22px rgba(0, 0, 0, 0.55);
 }
 
-.brand span {
-  margin-top: 7px;
+.admin-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 
-  color: var(--gold);
+.admin-brand-name {
+  font-family: var(--font-display);
+  color: var(--white);
+  font-size: 17px;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
+}
 
-  font-size: 0.72rem;
-  font-weight: 800;
+.admin-brand-name em {
+  color: var(--gold-light);
+  font-style: normal;
+}
 
-  letter-spacing: 0.42em;
+.admin-brand-kicker {
+  color: var(--stone-dim);
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-
-  transform: translateX(0.21em);
 }
 
-.brand-line {
-  width: 46px;
-  height: 1px;
+/* ---------- public-site Greek-key motif ---------- */
+.gk-divider {
+  width: 100%;
+  height: 20px;
+  background-color: var(--black-soft);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='32' viewBox='0 0 16 32'%3E%3Cpath d='M0,24 L0,8 L8,8 L8,24 L16,24' fill='none' stroke='%23C9A227' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  background-size: 16px 20px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  animation: gk-crawl 5s linear infinite;
+}
 
-  margin: 25px auto 18px;
+@keyframes gk-crawl {
+  from { background-position: 0 center; }
+  to { background-position: -32px center; }
+}
 
-  background: var(--gold);
+.eyebrow,
+.section-kicker {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: var(--gold-light);
+  letter-spacing: 0.28em;
 }
 
 .eyebrow {
-  margin: 0;
-
-  color: var(--gold);
-
-  font-size: 0.65rem;
-  font-weight: 800;
-
-  letter-spacing: 0.22em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 11px;
 }
 
+.eyebrow .star {
+  color: var(--gold);
+  font-size: 10px;
+}
+
+.section-kicker {
+  margin: 0 0 8px !important;
+  font-size: 10px !important;
+}
+
+/* ---------- corner framing ---------- */
+.frame-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  color: var(--gold);
+}
+
+.corner-tl { top: 10px; left: 10px; border-top: 1px solid; border-left: 1px solid; }
+.corner-tr { top: 10px; right: 10px; border-top: 1px solid; border-right: 1px solid; }
+.corner-bl { bottom: 10px; left: 10px; border-bottom: 1px solid; border-left: 1px solid; }
+.corner-br { bottom: 10px; right: 10px; border-bottom: 1px solid; border-right: 1px solid; }
 
 /* ==========================================================
-   LOGIN INTRO
+   LOGIN
    ========================================================== */
+.login-page {
+  width: min(100%, 1180px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 28px 20px;
+  display: grid;
+  place-items: center;
+}
+
+.login-panel {
+  position: relative;
+  width: min(100%, 520px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(145deg, rgba(34, 30, 25, 0.92), rgba(10, 9, 8, 0.96));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+}
+
+.login-brand {
+  padding: 30px 30px 26px;
+}
 
 .login-intro {
-  margin-top: 42px;
+  padding: 34px 30px 0;
 }
 
-.intro-label {
-  margin: 0 0 8px;
-
-  color: var(--muted);
-
-  font-size: 0.67rem;
-  font-weight: 700;
-
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-.login-intro h2 {
+.login-intro h1 {
   margin: 0;
-
-  color: var(--text);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2rem, 8vw, 2.8rem);
-  font-weight: 400;
-
-  line-height: 1.05;
+  font-size: clamp(2.15rem, 9vw, 3.25rem);
 }
 
 .subtitle {
-  max-width: 380px;
-
-  margin: 12px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.88rem;
+  max-width: 39ch;
+  margin: 14px 0 0;
+  color: var(--stone);
+  font-size: 1.05rem;
 }
-
-
-/* ==========================================================
-   LOGIN FORM
-   ========================================================== */
 
 #loginForm {
-  margin-top: 30px;
+  padding: 26px 30px 0;
 }
 
-.field {
-  margin-bottom: 18px;
-}
+.field { margin-bottom: 18px; }
 
 .field label {
   display: block;
-
   margin-bottom: 8px;
+  color: var(--marble);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
 
-  color: #d8d8d8;
-
-  font-size: 0.76rem;
-  font-weight: 700;
-
-  letter-spacing: 0.02em;
+.field input,
+.portfolio-order-input {
+  outline: none;
+  color: var(--white);
+  background: rgba(10, 9, 8, 0.68);
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  border-radius: var(--radius);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .field input {
   display: block;
-
   width: 100%;
-  min-height: 50px;
-
-  padding: 0 15px;
-
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-
-  outline: none;
-
-  background: rgba(255, 255, 255, 0.035);
-  color: var(--text);
-
-  font-size: 0.9rem;
-
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+  min-height: 54px;
+  padding: 0 16px;
+  font-size: 1.02rem;
 }
 
-.field input::placeholder {
-  color: #6f6f6f;
+.field input::placeholder { color: var(--stone-dim); }
+
+.field input:hover { border-color: rgba(232, 199, 102, 0.38); }
+
+.field input:focus,
+.portfolio-order-input:focus {
+  border-color: var(--gold-light);
+  background: rgba(201, 162, 39, 0.045);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.08);
 }
 
-.field input:hover {
-  border-color: rgba(255, 255, 255, 0.18);
+.primary-button,
+#loginButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 14px 24px;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+  color: #161208;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 0 7px 22px rgba(201, 162, 39, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
-
-.field input:focus {
-  border-color: rgba(212, 175, 55, 0.65);
-
-  background: rgba(212, 175, 55, 0.035);
-
-  box-shadow:
-    0 0 0 3px rgba(212, 175, 55, 0.08);
-}
-
-
-/* ==========================================================
-   LOGIN BUTTON
-   ========================================================== */
 
 #loginButton {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
   width: 100%;
-  min-height: 52px;
-
-  margin-top: 8px;
-
-  padding: 0 17px;
-
-  border: 1px solid var(--gold);
-  border-radius: 10px;
-
-  background: var(--gold);
-  color: #101010;
-
-  font-size: 0.78rem;
-  font-weight: 900;
-
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-
-  transition:
-    transform 0.15s ease,
-    filter 0.2s ease,
-    box-shadow 0.2s ease;
+  justify-content: space-between;
+  margin-top: 6px;
 }
 
+.primary-button:hover,
 #loginButton:hover {
-  filter: brightness(1.08);
-
-  box-shadow:
-    0 8px 30px rgba(212, 175, 55, 0.16);
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow: 0 11px 28px rgba(201, 162, 39, 0.28);
 }
 
-#loginButton:active {
-  transform: translateY(1px);
-}
-
-.button-arrow {
-  font-size: 1.2rem;
-  font-weight: 400;
-}
-
-
-/* ==========================================================
-   MESSAGE
-   ========================================================== */
+.primary-button:active,
+#loginButton:active { transform: translateY(0); }
+.button-arrow { font-size: 1.15rem; }
 
 .message {
   min-height: 22px;
-
   margin: 12px 0 0;
-
   color: var(--danger);
-
-  font-size: 0.78rem;
-
+  font-size: 0.92rem;
   text-align: center;
 }
 
-#uploadMessage {
-  color: var(--gold);
-}
-
-
-/* ==========================================================
-   LOGIN FOOTER
-   ========================================================== */
+#uploadMessage,
+#portfolioMessage { color: var(--gold-pale); }
 
 .login-footer {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
-  margin-top: 32px;
+  padding: 28px 30px 30px;
 }
 
-.login-footer > span {
+.footer-line {
   flex: 1;
-
   height: 1px;
-
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--line);
 }
 
 .login-footer p {
   margin: 0;
-
-  color: #666;
-
-  font-size: 0.58rem;
-  font-weight: 700;
-
-  letter-spacing: 0.12em;
-
-  white-space: nowrap;
+  color: var(--stone-dim);
+  font-family: var(--font-display);
+  font-size: 8.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
-.login-footer p span {
-  display: inline;
-
-  color: var(--gold);
-}
-
+.login-footer p span { color: var(--gold); }
 
 /* ==========================================================
-   ADMIN SHELL
+   DASHBOARD SHELL
    ========================================================== */
+.auth-checking .admin-shell { opacity: 0; }
 
 .admin-shell {
   width: min(1180px, calc(100% - 32px));
-
   margin: 0 auto;
-
-  padding: 32px 0 60px;
+  padding: 24px 0 64px;
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
-
-
-/* ==========================================================
-   ADMIN HEADER
-   ========================================================== */
 
 .admin-header {
   display: flex;
-  flex-direction: column;
-
-  gap: 24px;
-
-  padding: 10px 0 32px;
-
-  border-bottom: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 0 22px;
 }
-
-.admin-eyebrow {
-  margin: 0 0 5px;
-
-  color: var(--gold);
-
-  font-size: 0.72rem;
-  font-weight: 700;
-
-  letter-spacing: 0.18em;
-}
-
-.admin-header h1 {
-  margin: 0;
-
-  color: var(--text);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: clamp(2.2rem, 8vw, 4rem);
-  font-weight: 500;
-
-  line-height: 1;
-}
-
-.admin-subtitle {
-  max-width: 560px;
-
-  margin: 12px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.95rem;
-}
-
-
-/* ==========================================================
-   LOGOUT
-   ========================================================== */
 
 .logout-button {
-  width: 100%;
-
-  padding: 12px 18px;
-
-  border: 1px solid var(--border);
-  border-radius: 999px;
-
+  flex: 0 0 auto;
+  padding: 11px 16px;
+  border: 1px solid var(--gold-deep);
+  border-radius: var(--radius);
   background: transparent;
-  color: var(--text);
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
+  color: var(--gold-light);
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .logout-button:hover {
-  background: var(--surface-2);
-
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  border-color: var(--gold-light);
+  background: rgba(201, 162, 39, 0.08);
 }
 
+.admin-hero {
+  padding: clamp(42px, 7vw, 76px) 0 18px;
+  max-width: 760px;
+}
+
+.admin-hero h1 {
+  margin: 0;
+  font-size: clamp(2.35rem, 8vw, 4.6rem);
+}
+
+.admin-subtitle {
+  max-width: 58ch;
+  margin: 15px 0 0;
+  color: var(--stone);
+  font-size: clamp(1.05rem, 2.4vw, 1.2rem);
+}
 
 /* ==========================================================
-   SECTIONS
+   DASHBOARD PANELS
    ========================================================== */
-
-.upload-section,
-.portfolio-section {
+.admin-panel {
+  position: relative;
   margin-top: 28px;
-
-  padding: 22px;
-
-  border: 1px solid var(--border);
+  padding: clamp(24px, 4vw, 36px);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
-
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0.01)
-    );
-
-  box-shadow: var(--shadow);
+    linear-gradient(145deg, rgba(34, 30, 25, 0.84), rgba(10, 9, 8, 0.92));
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.34);
 }
 
 .section-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-
   gap: 16px;
-
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .section-heading h2 {
   margin: 0;
-
-  color: var(--text);
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
-  font-size: 1.45rem;
-  font-weight: 500;
+  font-size: clamp(1.55rem, 4vw, 2.35rem);
 }
 
-.section-heading p {
-  margin: 6px 0 0;
-
-  color: var(--muted);
-
-  font-size: 0.86rem;
+.section-heading p:not(.section-kicker) {
+  max-width: 62ch;
+  margin: 8px 0 0;
+  color: var(--stone);
+  font-size: 1rem;
 }
-
 
 /* ==========================================================
    UPLOAD
    ========================================================== */
-
 .upload-controls {
-  display: flex;
-  flex-direction: column;
-
+  display: grid;
   gap: 12px;
 }
 
 #imageInput {
   width: 100%;
-
-  padding: 13px;
-
-  border: 1px dashed rgba(212, 175, 55, 0.45);
-  border-radius: 12px;
-
-  background: var(--surface);
-  color: var(--muted);
+  min-height: 58px;
+  padding: 11px;
+  border: 1px dashed rgba(201, 162, 39, 0.48);
+  border-radius: var(--radius);
+  background: rgba(10, 9, 8, 0.65);
+  color: var(--stone);
 }
 
+#imageInput:hover { border-color: var(--gold-light); }
+
 #imageInput::file-selector-button {
-  margin-right: 10px;
-
-  padding: 9px 13px;
-
-  border: 0;
-  border-radius: 8px;
-
-  background: var(--gold);
-  color: #111;
-
-  font-weight: 700;
-
+  margin-right: 12px;
+  padding: 11px 16px;
+  border: 1px solid var(--gold-deep);
+  border-radius: var(--radius);
+  background: rgba(201, 162, 39, 0.10);
+  color: var(--gold-light);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
+.upload-controls .primary-button { width: 100%; }
 
 /* ==========================================================
-   PRIMARY BUTTON
+   PORTFOLIO GRID + CARDS
    ========================================================== */
-
-.primary-button {
-  width: 100%;
-
-  padding: 13px 18px;
-
-  border: 1px solid var(--gold);
-  border-radius: 10px;
-
-  background: var(--gold);
-  color: #111;
-
-  font-weight: 800;
-
-  transition:
-    transform 0.15s ease,
-    filter 0.2s ease;
-}
-
-.primary-button:hover {
-  filter: brightness(1.08);
-}
-
-.primary-button:active {
-  transform: translateY(1px);
-}
-
-
-/* ==========================================================
-   PORTFOLIO GRID
-   ========================================================== */
-
 .portfolio-grid {
   display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
-
-
-/* ==========================================================
-   PORTFOLIO CARD
-   ========================================================== */
 
 .portfolio-card {
   position: relative;
-
   overflow: hidden;
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  border-radius: var(--radius);
+  background: rgba(10, 9, 8, 0.76);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, opacity 0.2s ease;
+}
 
-  border: 1px solid var(--border);
-  border-radius: 12px;
-
-  background: var(--surface);
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.2s ease;
+.portfolio-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(232, 199, 102, 0.04);
 }
 
 .portfolio-card:hover {
-  border-color: rgba(212, 175, 55, 0.45);
+  transform: translateY(-3px);
+  border-color: rgba(232, 199, 102, 0.55);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.42);
 }
-
-
-/* ==========================================================
-   IMAGE
-   ========================================================== */
 
 .portfolio-preview {
   display: block;
-
   width: 100%;
-
-  aspect-ratio: 1 / 1;
-
+  aspect-ratio: 4 / 5;
   object-fit: cover;
-
-  background: #080808;
+  background: var(--black);
+  border-bottom: 1px solid var(--line);
 }
-
-
-/* ==========================================================
-   PORTFOLIO INFORMATION
-   ========================================================== */
 
 .portfolio-info {
   display: flex;
   flex-direction: column;
-
-  gap: 9px;
-
-  padding: 12px;
+  gap: 10px;
+  padding: 13px;
 }
-
-
-/* ==========================================================
-   PORTFOLIO POSITION EDITOR
-   ========================================================== */
 
 .portfolio-order {
   display: inline-flex;
   align-items: center;
-
   width: fit-content;
-
+  min-height: 30px;
   padding: 4px 9px;
-
-  border-radius: 999px;
-
-  background: var(--gold-soft);
-  color: var(--gold);
-
-  font-size: 0.75rem;
-  font-weight: 800;
-
+  border: 1px solid rgba(201, 162, 39, 0.34);
+  border-radius: var(--radius);
+  background: rgba(201, 162, 39, 0.09);
+  color: var(--gold-light);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   cursor: pointer;
   user-select: none;
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
 .portfolio-order:hover {
-  opacity: 0.75;
+  background: rgba(201, 162, 39, 0.16);
+  border-color: var(--gold-light);
 }
-
-.portfolio-order:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-
-
-/* ==========================================================
-   POSITION INPUT
-   ========================================================== */
 
 .portfolio-order-input {
-  width: 4.5rem;
-  min-width: 4.5rem;
-
-  box-sizing: border-box;
-
+  width: 4.2rem;
+  min-width: 4.2rem;
+  min-height: 28px;
+  padding: 0.2rem 0.4rem;
   font: inherit;
   font-weight: inherit;
-  color: inherit;
-
-  background: transparent;
-  border: 1px solid currentColor;
-  border-radius: 6px;
-
-  padding: 0.2rem 0.4rem;
-
   text-align: center;
-
-  outline: none;
-
   appearance: textfield;
   -moz-appearance: textfield;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
 }
-
-
-/* Remove browser number-input arrows */
 
 .portfolio-order-input::-webkit-inner-spin-button,
 .portfolio-order-input::-webkit-outer-spin-button {
@@ -845,250 +575,128 @@ button:disabled {
   appearance: none;
 }
 
-
-/* Focus */
-
-.portfolio-order-input:focus {
-  border-color: currentColor;
-
-  box-shadow:
-    0 0 0 2px
-    rgba(255, 255, 255, 0.08);
-}
-
-
-/* ==========================================================
-   PORTFOLIO STATUS
-   ========================================================== */
-
 .portfolio-status {
-  color: var(--muted);
-
-  font-size: 0.74rem;
-  font-weight: 600;
+  color: var(--stone);
+  font-size: 0.92rem;
 }
-
-
-/* ==========================================================
-   SAVING STATE
-   ========================================================== */
 
 .portfolio-order.position-saving {
   pointer-events: none;
   opacity: 0.55;
 }
 
-
-/* ==========================================================
-   ERROR STATE
-   ========================================================== */
-
-.portfolio-order.position-error {
-  animation:
-    portfolio-position-error 0.25s ease;
-}
-
+.portfolio-order.position-error { animation: portfolio-position-error 0.25s ease; }
 
 @keyframes portfolio-position-error {
-
-  0% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-3px);
-  }
-
-  50% {
-    transform: translateX(3px);
-  }
-
-  75% {
-    transform: translateX(-2px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }
-
-
-/* ==========================================================
-   CONTROLS
-   ========================================================== */
 
 .portfolio-controls {
   display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
+  grid-template-columns: 1fr 1fr;
   gap: 7px;
 }
 
 .portfolio-controls button {
-  min-height: 38px;
-
-  padding: 8px;
-
-  border-radius: 8px;
-
-  font-size: 0.75rem;
-  font-weight: 700;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
+  min-height: 40px;
+  padding: 8px 7px;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-
-/* ==========================================================
-   PUBLISH
-   ========================================================== */
-
 .publish-button {
-  border: 1px solid rgba(212, 175, 55, 0.35);
-
-  background: var(--gold-soft);
-  color: var(--gold);
+  border: 1px solid var(--gold-deep);
+  background: rgba(201, 162, 39, 0.08);
+  color: var(--gold-light);
 }
 
 .publish-button:hover {
-  background: rgba(212, 175, 55, 0.22);
+  border-color: var(--gold-light);
+  background: rgba(201, 162, 39, 0.15);
 }
 
-
-/* ==========================================================
-   DELETE
-   ========================================================== */
-
 .delete-button {
-  border: 1px solid rgba(229, 107, 111, 0.25);
-
-  background: rgba(229, 107, 111, 0.08);
-  color: var(--danger);
+  border: 1px solid rgba(223, 123, 125, 0.34);
+  background: rgba(223, 123, 125, 0.06);
+  color: #ef9a9c;
 }
 
 .delete-button:hover {
-  background: rgba(229, 107, 111, 0.16);
+  border-color: rgba(239, 154, 156, 0.7);
+  background: rgba(223, 123, 125, 0.13);
 }
 
-
-/* ==========================================================
-   ACCESSIBILITY
-   ========================================================== */
-
+/* ---------- accessibility ---------- */
 button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--gold);
-
+input:focus-visible,
+.portfolio-order:focus-visible {
+  outline: 2px solid var(--gold-light);
   outline-offset: 3px;
 }
 
-
-/* ==========================================================
-   DESKTOP
-   ========================================================== */
-
+/* ---------- tablet / desktop ---------- */
 @media (min-width: 700px) {
+  .login-page { padding: 44px 24px; }
+  .login-brand { padding: 34px 38px 28px; }
+  .login-intro { padding: 40px 38px 0; }
+  #loginForm { padding: 28px 38px 0; }
+  .login-footer { padding: 30px 38px 34px; }
 
-  .login-card {
-    padding: 46px 46px 28px;
-  }
-
-  .admin-shell {
-    padding-top: 48px;
-  }
-
-  .admin-header {
-    flex-direction: row;
-
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  .logout-button {
-    width: auto;
-  }
-
-  .upload-section,
-  .portfolio-section {
-    padding: 28px;
-  }
-
+  .admin-shell { padding-top: 32px; }
   .upload-controls {
-    flex-direction: row;
-
-    align-items: center;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
   }
-
-  #imageInput {
-    flex: 1;
-  }
-
-  .primary-button {
+  .upload-controls .primary-button {
     width: auto;
-
-    min-width: 170px;
+    min-width: 190px;
   }
-
   .portfolio-grid {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
   }
 }
 
-
-/* ==========================================================
-   LARGE DESKTOP
-   ========================================================== */
-
 @media (min-width: 1050px) {
-
-  .portfolio-grid {
-    grid-template-columns:
-      repeat(4, minmax(0, 1fr));
-  }
+  .portfolio-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+@media (max-width: 520px) {
+  .admin-shell { width: min(100% - 24px, 1180px); }
+  .admin-header { align-items: flex-start; }
+  .admin-brand-mark { width: 46px; height: 46px; flex-basis: 46px; }
+  .admin-brand-name { font-size: 15px; }
+  .admin-brand-kicker { font-size: 7.8px; }
+  .logout-button { padding: 10px 11px; font-size: 8.5px; }
 
-/* ==========================================================
-   MOBILE POSITION INPUT
-   ========================================================== */
+  .login-page { padding: 16px 12px; }
+  .login-brand { padding: 26px 22px 22px; }
+  .login-intro { padding: 30px 22px 0; }
+  #loginForm { padding: 24px 22px 0; }
+  .login-footer { padding: 26px 22px 28px; }
+  .login-footer p { font-size: 7.4px; letter-spacing: 0.08em; }
 
-@media (max-width: 600px) {
-
-  .portfolio-order-input {
-    width: 4rem;
-    min-width: 4rem;
-
-    min-height: 2.2rem;
-
-    font-size: 1rem;
-
-    padding:
-      0.3rem
-      0.45rem;
-  }
-
+  .admin-panel { padding: 22px 16px; }
+  .portfolio-grid { gap: 10px; }
+  .portfolio-info { padding: 10px; gap: 8px; }
+  .portfolio-controls { grid-template-columns: 1fr; }
+  .portfolio-controls button { min-height: 38px; }
 }
-
-
-/* ==========================================================
-   REDUCED MOTION
-   ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     scroll-behavior: auto !important;
-
     transition-duration: 0.01ms !important;
-
     animation-duration: 0.01ms !important;
   }
+  .gk-divider { animation: none; }
 }
