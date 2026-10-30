@@ -244,3 +244,32 @@
     border-radius: 14px 14px 0 0;
   }
 }
+
+/* ==========================================================
+   DASHBOARD — REDUCE ONLY THE TWO MARKED EMPTY GAPS
+   ========================================================== */
+
+/* Gap 1: description -> Upload section. */
+.admin-dashboard-body .upload-section {
+  margin-top: 8px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Gap 2: Upload button -> Portfolio Library. Keep message space
+   only when there is actually a status message to show. */
+.admin-dashboard-body #uploadMessage:empty {
+  min-height: 0;
+  margin: 0;
+}
+
+.admin-dashboard-body .portfolio-section {
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .admin-dashboard-body .upload-section,
+  .admin-dashboard-body .portfolio-section {
+    margin-top: 6px;
+  }
+}
