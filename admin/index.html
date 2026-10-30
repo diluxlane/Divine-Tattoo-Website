@@ -2,168 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="theme-color"
-    content="#080808"
-  >
-
-  <title>Divine Tattoo — Private Studio</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0908">
+  <title>Studio Login | Divine Tattoo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
-
-<body>
-
+<body class="admin-login-body">
   <main class="login-page">
+    <section class="login-panel" aria-labelledby="loginTitle">
+      <span class="frame-corner corner-tl" aria-hidden="true"></span>
+      <span class="frame-corner corner-tr" aria-hidden="true"></span>
+      <span class="frame-corner corner-bl" aria-hidden="true"></span>
+      <span class="frame-corner corner-br" aria-hidden="true"></span>
 
-    <div class="login-background" aria-hidden="true">
-      <span class="background-orb background-orb-one"></span>
-      <span class="background-orb background-orb-two"></span>
-    </div>
-
-    <section
-      class="login-card"
-      aria-labelledby="loginTitle"
-    >
-
-      <!-- Brand -->
-
-      <header class="brand-area">
-
-        <div class="brand">
-          <h1>Divine</h1>
-          <span>Tattoo</span>
+      <header class="login-brand">
+        <img src="../assets/logo-480.jpg" alt="Divine Tattoo crest" class="admin-brand-mark">
+        <div class="admin-brand-copy">
+          <span class="admin-brand-name">Divine<em>Tattoo</em></span>
+          <span class="admin-brand-kicker">Private Studio CMS</span>
         </div>
-
-        <div class="brand-line"></div>
-
-        <p class="eyebrow">
-          PRIVATE STUDIO CMS
-        </p>
-
       </header>
 
-
-      <!-- Introduction -->
+      <div class="gk-divider" aria-hidden="true"></div>
 
       <div class="login-intro">
-
-        <p class="intro-label">
-          Studio Access
-        </p>
-
-        <h2 id="loginTitle">
-          Welcome Back
-        </h2>
-
-        <p class="subtitle">
-          Sign in to manage the Divine Tattoo portfolio.
-        </p>
-
+        <p class="eyebrow"><span class="star">✦</span> Private Management Access <span class="star">✦</span></p>
+        <h1 id="loginTitle">Studio Login</h1>
+        <p class="subtitle">Sign in to manage the portfolio displayed on the Divine Tattoo website.</p>
       </div>
 
-
-      <!-- Login form -->
-
       <form id="loginForm" novalidate>
-
         <div class="field">
-
-          <label for="email">
-            Email
-          </label>
-
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Your email"
-            autocomplete="email"
-            inputmode="email"
-            required
-          >
-
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="studio@email.com" autocomplete="email" inputmode="email" required>
         </div>
 
-
         <div class="field">
-
-          <div class="field-header">
-
-            <label for="password">
-              Password
-            </label>
-
-          </div>
-
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Your password"
-            autocomplete="current-password"
-            required
-          >
-
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
         </div>
 
-
-        <button
-          type="submit"
-          id="loginButton"
-        >
-          <span class="button-text">
-            Sign In
-          </span>
-
-          <span
-            class="button-arrow"
-            aria-hidden="true"
-          >
-            →
-          </span>
+        <button type="submit" id="loginButton" class="primary-button">
+          <span class="button-text">Sign In</span>
+          <span class="button-arrow" aria-hidden="true">→</span>
         </button>
 
-
-        <p
-          id="loginMessage"
-          class="message"
-          aria-live="polite"
-        ></p>
-
+        <p id="loginMessage" class="message" aria-live="polite"></p>
       </form>
 
-
-      <!-- Footer -->
-
       <footer class="login-footer">
-
-        <span></span>
-
-        <p>
-          DIVINE TATTOO
-          <span>•</span>
-          PRIVATE ACCESS
-        </p>
-
-        <span></span>
-
+        <span class="footer-line" aria-hidden="true"></span>
+        <p>Divine Tattoo <span>•</span> Authorized Studio Access</p>
+        <span class="footer-line" aria-hidden="true"></span>
       </footer>
-
     </section>
-
   </main>
 
-
-  <script
-    type="module"
-    src="admin.js"
-  ></script>
-
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
